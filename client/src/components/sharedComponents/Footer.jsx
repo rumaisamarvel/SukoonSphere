@@ -63,12 +63,11 @@ const Footer = () => {
                 <ul className="space-y-3">
                   {links.map((link, index) => (
                     <li key={`${link.name}-${index}`}>
-                      <NavLink
-                        to={link.address}
-                        className="text-slate-300 hover:text-amber-400 font-medium"
+                      <span 
+                        className="text-slate-300  font-medium"
                       >
                         {link.name}
-                      </NavLink>
+                      </span>
                       {link.sublinks && (
                         <ul className="mt-2 ml-4 space-y-2">
                           {link.sublinks.map((sublink) => (

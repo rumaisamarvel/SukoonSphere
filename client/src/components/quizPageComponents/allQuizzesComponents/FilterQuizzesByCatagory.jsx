@@ -26,7 +26,7 @@ function FilterQuizzesByCategory() {
                     </select>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-4 md:col-span-2 size-2 items-start">
+                <div className="flex  md:flex-row gap-4 md:col-span-2 size-2 items-start">
                     <button
                         type="submit"
                         className=" btn btn-outline btn-[red] btn-sm"

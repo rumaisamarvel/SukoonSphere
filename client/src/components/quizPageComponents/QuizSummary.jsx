@@ -9,7 +9,7 @@ const QuizSummary = ({ data }) => {
         <div className="attachment-styles">
             {/* Quiz Title and Subtitle */}
             <div>
-                <h1 className="sm:text-lg md:text-3xl lg:text-3xl font-bold  mb-2">{data.title}</h1>
+                <h1 className="text-[1.6rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem] font-bold  mb-2">{data.title}</h1>
                 <p className="text-[var(--black-color)] mb-4 text-semibold md:text-base lg:text-base font-bold">
                     {data.subtitle}
                 </p>

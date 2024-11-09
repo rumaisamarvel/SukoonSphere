@@ -15,13 +15,13 @@ function QuizList({ quizCategories, }) {
                     <h2 className="text-xl font-bold text-[var(--black-color)] mb-4">{allCategory.category}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
                         {allCategory.quizzes.map((quiz) => (
-                            <div key={quiz.id} className="card bg-white shadow-lg rounded-[4px] transform transition-transform duration-300 ease-in-out hover:scale-[101%]">
+                            <div key={quiz.id} className=" bg-white shadow-lg rounded-[10px] transform transition-transform duration-300 ease-in-out hover:scale-[101%]">
                                 <Link to={`quiz/${quiz.quizId}`}>
                                     <figure>
                                         <img
                                             src={quiz.imageSrc || 'default_image_placeholder_url'}
                                             alt={quiz.imageAlt}
-                                            className="h-48 w-full object-cover transform transition-transform duration-300 ease-in-out hover:scale-105"
+                                            className="h-48 w-full object-cover rounded-t-[10px] "
                                         />
                                     </figure>
                                 </Link>

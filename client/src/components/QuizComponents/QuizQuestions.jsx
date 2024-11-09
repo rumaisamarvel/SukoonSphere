@@ -63,7 +63,7 @@ const QuizQuestions = ({ quizQuestionsList }) => {
 
     return (
         <>
-            <div className='space-y-2 sticky top-16 '>
+            <div className='space-y-2  '>
                 <div className='bg-[var(--primary)] rounded-t-[20px] p-4 '>
                     <div className="flex justify-between items-center ">
                         <h1 className="text-2xl font-bold text-[var(--white-color)]">Question {currentQuestionIndex + 1}</h1>
