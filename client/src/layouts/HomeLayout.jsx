@@ -1,27 +1,41 @@
 import { Outlet, redirect } from "react-router-dom"
 import { Wrapper } from "../assets/styles/HomeLayout"
-import { Footer, Header } from "../components"
 import { ScrollRestoration } from "react-router-dom"
 import customFetch from "@/utils/customFetch"
-export const logoutAction = async () => {
+import { Suspense, lazy } from "react"
+import LoadingSpinner from "@/components/loaders/LoadingSpinner"
+
+// Lazy load components
+const Header = lazy(() => import("../components/sharedComponents/Header"))
+const Footer = lazy(() => import("../components/sharedComponents/Footer"))
+
+// Memoize logout action
+const logoutAction = async () => {
   try {
     const response = await customFetch.get("/auth/logout")
-    console.log({ response })
-    return redirect("/")
+    if (response.status === 200) {
+      return redirect("/")
+    }
   } catch (error) {
-    console.log({ error })
+    console.error("Logout error:", error)
   }
-
 }
 const HomeLayout = () => {
   return (
     <Wrapper>
       <ScrollRestoration />
-      <Header />
-      <Outlet />
-      <Footer />
-
+      <Suspense fallback={<LoadingSpinner />}>
+        <Header />
+      </Suspense>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Outlet />
+      </Suspense>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Footer />
+      </Suspense>
     </Wrapper>
   )
 }
+
+export { logoutAction }
 export default HomeLayout

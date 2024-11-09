@@ -33,7 +33,7 @@ const CommentSection = ({
     onReplyToComment,
     onDeleteReply,
     currentUser,
-    type = 'post'
+    type
 }) => {
     // State for managing new comment input and submission status
     const [newComment, setNewComment] = useState('');

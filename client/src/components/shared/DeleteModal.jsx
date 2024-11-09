@@ -13,7 +13,7 @@ const DeleteModal = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto ">
             {/* Overlay */}
             <div
                 className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
@@ -21,8 +21,8 @@ const DeleteModal = ({
             />
 
             {/* Modal */}
-            <div className="flex items-center justify-center min-h-screen p-4">
-                <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-center min-h-screen p-4 ">
+                <div className="relative bg-white rounded-[8px] shadow-xl max-w-md w-full p-6">
                     {/* Header */}
                     <div className="flex items-center justify-center mb-4">
                         <FaExclamationTriangle className="text-red-500 text-3xl" />

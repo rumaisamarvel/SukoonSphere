@@ -134,10 +134,13 @@ const Comment = ({
     }
 
     // Fetch replies for a comment
-
     const fetchReplies = async () => {
         try {
-            const { data } = await customFetch.get(`/qa-section/answer/comments/${comment._id}/replies`);
+            const endpoint = type === 'post'
+                ? `/posts/comments/${comment._id}/replies`
+                : `/qa-section/answer/comments/${comment._id}/replies`;
+
+            const { data } = await customFetch.get(endpoint);
             setReplies(data.replies || []);
         } catch (error) {
             console.error('Failed to fetch replies:', error);
@@ -145,12 +148,10 @@ const Comment = ({
     };
 
 
-    // Fetch replies when showReplies changes
+    // Fetch replies when comment loads
     useEffect(() => {
-        if (showReplies) {
-            fetchReplies();
-        }
-    }, [comment._id, showReplies, handleDeleteReply]);
+        fetchReplies();
+    }, [comment._id]);
 
     return (
         <div className="ml-4 mt-4">
@@ -170,7 +171,7 @@ const Comment = ({
                         {user?._id === comment.createdBy && (
                             <div className="relative">
                                 <BsThreeDotsVertical
-                                    className="text-black cursor-pointer"
+                                    className="text-black cursor-pointer rotate-90"
                                     onClick={() => setShowActionModal(!showActionModal)}
                                 />
                                 {showActionModal && (
