@@ -6,6 +6,7 @@ import { FaReply } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import DeleteModal from '../DeleteModal';
+import { IoMdClose } from 'react-icons/io';
 
 const Reply = ({
     reply,
@@ -74,10 +75,17 @@ const Reply = ({
                         <div className="flex items-center gap-2">
                             {isAuthor && (
                                 <div className="relative">
-                                    <BsThreeDotsVertical
-                                        className="text-black cursor-pointer"
-                                        onClick={() => setShowActionModal(!showActionModal)}
-                                    />
+                                    {showActionModal ? (
+                                        <IoMdClose
+                                            className="text-black cursor-pointer"
+                                            onClick={() => setShowActionModal(false)}
+                                        />
+                                    ) : (
+                                        <BsThreeDotsVertical
+                                            className="text-black cursor-pointer rotate-90"
+                                            onClick={() => setShowActionModal(true)}
+                                        />
+                                    )}
                                     {showActionModal && (
                                         <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
                                             <button

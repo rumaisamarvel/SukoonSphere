@@ -71,28 +71,54 @@ function NavMenu() {
   );
 }
 
-const UserSection = ({ user, miniMenu, toggleMiniMenu, handleLogout }) => (
-  <>
-    <div className="hidden lg:flex items-center justify-center gap-2">
-      <img
-        className="w-9 h-9 rounded-full border-[3px] border-blue-400"
-        src={
-          user?.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/147/147142.png"
-        }
-        alt="User"
-      />
-      <BsThreeDotsVertical
-        className="block cursor-pointer text-[1.4rem]"
-        onClick={toggleMiniMenu}
-      />
-      <Link to="about/user">
-        <span className="text-black">{user?.name}</span>
-      </Link>
+const UserSection = ({ user, miniMenu, toggleMiniMenu, handleLogout }) => {
+  const menuRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        if (miniMenu) toggleMiniMenu();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [miniMenu, toggleMiniMenu]);
+
+  return (
+    <div ref={menuRef}>
+      <div className="hidden lg:flex items-center justify-center gap-2">
+        <Link to="about/user">
+          <div className="group relative">
+            <img
+              className="w-9 h-9 rounded-full border-[3px] border-gray-400 hover:border-blue-400"
+              src={
+                user?.avatar ||
+                "https://cdn-icons-png.flaticon.com/512/147/147142.png"
+              }
+              alt="User"
+            />
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              View Profile
+            </div>
+          </div>
+        </Link>
+        {miniMenu ? (
+          <RxCross2
+            className="block cursor-pointer size-8 hover:text-[var(--ternery)] hover:bg-gray-200 rounded-full p-1 transition-transform duration-300"
+            onClick={toggleMiniMenu}
+          />
+        ) : (
+          <BsThreeDotsVertical
+            className="block cursor-pointer size-8 hover:text-[var(--ternery)] hover:bg-gray-200 rounded-full p-1 transition-transform duration-300"
+            onClick={toggleMiniMenu}
+          />
+        )}
+      </div>
+      <UserMenu user={user} miniMenu={miniMenu} handleLogout={handleLogout} />
     </div>
-    <UserMenu user={user} miniMenu={miniMenu} handleLogout={handleLogout} />
-  </>
-);
+  );
+};
 
 const AuthButtons = () => (
   <div className="flex gap-2">
@@ -121,9 +147,8 @@ const MobileMenu = ({ user, menuOpen, toggleMenu, links, handleLogout }) => {
   return (
     <div className="block lg:hidden ">
       <ul
-        className={`fixed inset-y-0 left-0 w-64 bg-[var(--white-color)] transform transition-transform duration-300 ease-in-out ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 w-64 bg-[var(--white-color)] transform transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {/* Close Button */}
         <RxCross2
@@ -189,18 +214,16 @@ const MobileMenu = ({ user, menuOpen, toggleMenu, links, handleLogout }) => {
                 {link.sublinks && (
                   <div className="ml-auto">
                     <MdKeyboardArrowUp
-                      className={`text-[var(--primary)] group-hover:text-[var(--ternery)]  size-6 ${
-                        activeSublink === index ? "rotate-180" : ""
-                      }`}
+                      className={`text-[var(--primary)] group-hover:text-[var(--ternery)]  size-6 ${activeSublink === index ? "rotate-180" : ""
+                        }`}
                     />
                   </div>
                 )}
               </div>
               {link.sublinks && (
                 <div
-                  className={`pl-8 overflow-hidden transition-[max-height] duration-300 ease-in-out max-h-0 ${
-                    activeSublink === index ? "max-h-[1000px]" : ""
-                  }`}
+                  className={`pl-8 overflow-hidden transition-[max-height] duration-300 ease-in-out max-h-0 ${activeSublink === index ? "max-h-[1000px]" : ""
+                    }`}
                 >
                   <SubLinks sublinks={link.sublinks} toggleMenu={toggleMenu} />
                 </div>
@@ -211,18 +234,16 @@ const MobileMenu = ({ user, menuOpen, toggleMenu, links, handleLogout }) => {
         {user && (
           <div className="group px-2 border-t-[3px] ">
             <div className="w-full flex items-center gap-3 px-2 py-3 text-[var(--primary)] cursor-pointer" onClick={() => toggleSublink('settings')}>
-            <IoSettingsOutline/> <span className="text-sm font-medium">Settings</span>
+              <IoSettingsOutline /> <span className="text-sm font-medium">Settings</span>
               <div className="ml-auto">
                 <MdKeyboardArrowUp
-                  className={`text-[var(--primary)] group-hover:text-[var(--ternery)] size-6 ${
-                    activeSublink === 'settings' ? "rotate-180" : ""
-                  }`}
+                  className={`text-[var(--primary)] group-hover:text-[var(--ternery)] size-6 ${activeSublink === 'settings' ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             </div>
-            <div className={`pl-8 overflow-hidden transition-[max-height] duration-300 ease-in-out max-h-0 ${
-              activeSublink === 'settings' ? "max-h-[1000px]" : ""
-            }`}>
+            <div className={`pl-8 overflow-hidden transition-[max-height] duration-300 ease-in-out max-h-0 ${activeSublink === 'settings' ? "max-h-[1000px]" : ""
+              }`}>
               <ul>
                 <li className="py-2">
                   <NavLink
@@ -231,7 +252,7 @@ const MobileMenu = ({ user, menuOpen, toggleMenu, links, handleLogout }) => {
                     onClick={toggleMenu}
                   >
                     <div className="flex items-center gap-2">
-                     <MdOutlinePassword/> <span className="hover:text-[var(--ternery)]">Change Password</span>
+                      <MdOutlinePassword /> <span className="hover:text-[var(--ternery)]">Change Password</span>
                     </div>
                   </NavLink>
                 </li>
@@ -273,7 +294,7 @@ const SubLink = ({ sublink, toggleMenu }) => (
       onClick={toggleMenu}
     >
       <div className="flex items-center gap-2">
-         {sublink.icon} <span className="hover:text-[var(--ternery)]">{sublink.name}</span>
+        {sublink.icon} <span className="hover:text-[var(--ternery)]">{sublink.name}</span>
       </div>
     </NavLink>
   </li>

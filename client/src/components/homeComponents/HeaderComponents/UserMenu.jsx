@@ -6,9 +6,8 @@ import { MdPrivateConnectivity } from 'react-icons/md';
 function UserMenu({ user, miniMenu, handleLogout }) {
   return (
     <div
-      className={`${
-        miniMenu ? "opacity-100 max-h-[500px] " : "opacity-0 max-h-0"
-      } absolute overflow-hidden transition-all duration-300 
+      className={`${miniMenu ? "opacity-100 max-h-[500px] " : "opacity-0 max-h-0"
+        } absolute overflow-hidden transition-all duration-300 
       ease-in-out shadow-lg rounded-[4px] bg-[var(--body)] flex flex-col w-72 top-[4.5rem] right-[7.5rem]`}
       style={{
         transition: "opacity 0.5s ease, max-height 0.5s ease ",
