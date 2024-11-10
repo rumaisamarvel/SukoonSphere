@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import { BsPersonDash, BsPersonPlus, BsThreeDotsVertical } from 'react-icons/bs';
-import { LikePost } from '@/components';
+
 import UserAvatar from '@/components/shared/UserAvatar';
 import customFetch from '@/utils/customFetch';
 import { useUser } from '@/context/UserContext';
 import { AiOutlineComment } from 'react-icons/ai';
-
+import { Follow, Like } from '@/components';
 // Lazy load components that aren't immediately needed
 const CommentSection = lazy(() => import('@/components/shared/Comments/CommentSection'));
 const DeleteModal = lazy(() => import('@/components/shared/DeleteModal'));
@@ -52,6 +52,7 @@ const PostCard = ({ post, onPostDelete }) => {
         try {
             const { data } = await customFetch.post(`/posts/${post._id}/comments`, { content });
             setComments(prev => [data.comment, ...prev]); // Optimistic update
+            setShowComments(true);
             return data.comment;
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to add comment');
@@ -62,7 +63,7 @@ const PostCard = ({ post, onPostDelete }) => {
     const handleDeleteComment = useCallback(async (commentId) => {
         try {
             await customFetch.delete(`/posts/comments/${commentId}`);
-            setComments(prev => prev.filter(comment => comment._id !== commentId)); // Optimistic update
+            setComments(prev => prev.filter(comment => comment._id !== commentId));
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to delete comment');
             throw error;
@@ -72,11 +73,15 @@ const PostCard = ({ post, onPostDelete }) => {
     const handleReplyToComment = useCallback(async (commentId, content) => {
         try {
             const { data } = await customFetch.post(`/posts/comments/${commentId}/replies`, { content });
-            setComments(prev => prev.map(comment =>
-                comment._id === commentId
-                    ? { ...comment, replies: [...comment.replies, data.reply] }
-                    : comment
-            )); // Optimistic update
+            setComments(prev => prev.map(comment => {
+                if (comment._id === commentId) {
+                    return {
+                        ...comment,
+                        replies: [...(comment.replies || []), data.reply]
+                    };
+                }
+                return comment;
+            }));
             return data.reply;
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to add reply');
@@ -89,8 +94,8 @@ const PostCard = ({ post, onPostDelete }) => {
             await customFetch.delete(`/posts/comments/replies/${replyId}`);
             setComments(prev => prev.map(comment => ({
                 ...comment,
-                replies: comment.replies.filter(reply => reply._id !== replyId)
-            }))); // Optimistic update
+                replies: (comment.replies || []).filter(reply => reply._id !== replyId)
+            })));
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to delete reply');
             throw error;
@@ -119,6 +124,14 @@ const PostCard = ({ post, onPostDelete }) => {
         }
     }, [post.createdBy]);
 
+    const handleLikePost = async () => {
+        try {
+            await customFetch.patch(`/posts/${post._id}/like`);
+        } catch (error) {
+            handleCommentError('Error liking post');
+        }
+    };
+
     const toggleComments = useCallback(() => {
         setShowComments(prev => !prev);
     }, []);
@@ -130,16 +143,15 @@ const PostCard = ({ post, onPostDelete }) => {
                     <div className="flex items-center gap-2">
                         <UserAvatar
                             user={{
-                                picture: post?.avatar,
-                                username: post?.username
+                                picture: post?.avatar || '',
+                                username: post?.username || ''
                             }}
                             size="medium"
-                            fallbackImage="default-avatar.png"
                         />
                         <div >
                             <h4 className="font-semibold text-sm sm:text-base">{post?.username || 'Anonymous'}</h4>
                             <p className="text-gray-500 text-xs sm:text-sm">
-                                {post?.datePublished ? new Date(post.datePublished).toLocaleDateString() : 'Date not available'}
+                                {post?.datePublished ? new Date(post?.datePublished).toLocaleDateString() : 'Date not available'}
                             </p>
                         </div>
                     </div>
@@ -147,15 +159,13 @@ const PostCard = ({ post, onPostDelete }) => {
                     {user && (
                         <div className="relative">
                             {!isAuthor && (
-                                <div>
-                                    <button
-                                        onClick={handleFollowOrUnfollow}
-                                        className={`action-button flex items-center gap-1 btn-sm hover:scale-105 transition-all duration-300 ${isFollowing ? 'bg-gray-200' : ''}`}
-                                    >
-                                        {isFollowing ? 'Unfollow' : 'Follow'}
-                                        {isFollowing ? <BsPersonDash className="ml-1" /> : <BsPersonPlus className="ml-1" />}
-                                    </button>
-                                </div>
+                                <Follow
+                                    isFollowed={isFollowing}
+                                    userId={post.createdBy}
+                                    followers={post?.followers}
+                                    onFollow={handleFollowOrUnfollow}
+                                    onError={handleCommentError}
+                                />
                             )}
 
                             {isAuthor && (
@@ -166,7 +176,7 @@ const PostCard = ({ post, onPostDelete }) => {
                                     />
 
                                     {showActionModal && (
-                                        <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                                        <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg  z-10">
                                             <button
                                                 className="w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100 rounded-lg"
                                                 onClick={() => {
@@ -209,8 +219,10 @@ const PostCard = ({ post, onPostDelete }) => {
 
                 <div className="flex justify-between text-gray-500 text-sm mt-4 flex-wrap gap-2">
                     <div className="flex items-center gap-2 sm:gap-4">
-                        <LikePost
+                        <Like
+                            onLike={handleLikePost}
                             totalLikes={post?.totalLikes}
+                            likes={post?.likes}
                             id={post?._id}
                             onError={handleCommentError}
                         />

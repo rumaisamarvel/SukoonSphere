@@ -1,11 +1,13 @@
 import React, { lazy, Suspense } from 'react';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 import { UserAnswers } from '@/components';
+import { userFollowersLoader } from '@/components/user/userProfile/UserFollowers';
+import { userFollowingLoader } from '@/components/user/userProfile/UserFollowing';
 const ProfessionalsProfile = lazy(() => import('../pages/professionalProfile/ProfessionalsProfile'));
 const UserProfile = lazy(() => import('../pages/about/UserProfile'));
 const UserPosts = lazy(() => import('../components/user/userProfile/UserPosts'));
 const UserQuestions = lazy(() => import('../components/user/userProfile/UserQuestion'));
-const UserFollowers = lazy(() => import('../components/user/userProfile/UserFollowing'));
+const UserFollowers = lazy(() => import('../components/user/userProfile/UserFollowers'));
 const UserFollowing = lazy(() => import('../components/user/userProfile/UserFollowing'));
 
 export const userRoutes = [
@@ -56,6 +58,7 @@ export const userRoutes = [
                         <UserFollowers />
                     </Suspense>
                 ),
+                loader: userFollowersLoader
             },
             {
                 path: 'following',
@@ -64,6 +67,7 @@ export const userRoutes = [
                         <UserFollowing />
                     </Suspense>
                 ),
+                loader: userFollowingLoader
             },
         ],
     },

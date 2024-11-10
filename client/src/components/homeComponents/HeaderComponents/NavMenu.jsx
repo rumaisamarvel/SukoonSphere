@@ -18,7 +18,7 @@ function NavMenu() {
   const [miniMenu, setMiniMenu] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useUser();
-
+  console.log({ userInNavMenu: user })
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const toggleMiniMenu = () => setMiniMenu(!miniMenu);
 

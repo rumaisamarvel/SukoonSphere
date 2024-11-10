@@ -1,4 +1,4 @@
-import { LikePost } from '@/components';
+import { Like } from '@/components';
 import CommentSection from '@/components/shared/Comments/CommentSection';
 import UserAvatar from '@/components/shared/UserAvatar';
 import DeleteModal from '@/components/shared/DeleteModal';
@@ -14,6 +14,7 @@ const Answer = ({ answer, onError }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [comments, setComments] = useState([]);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [commentCount, setCommentCount] = useState(answer?.comments?.length || 0);
     const { user } = useUser();
     const isAuthor = user?._id === answer.author?.userId;
 
@@ -27,6 +28,7 @@ const Answer = ({ answer, onError }) => {
         try {
             const { data } = await customFetch.get(`/qa-section/answer/${answer._id}/all-comments`);
             setComments(data.comments || []);
+            setCommentCount(data.comments?.length || 0);
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to fetch answer');
             throw error;
@@ -39,6 +41,7 @@ const Answer = ({ answer, onError }) => {
                 content
             });
             setComments(prev => [data.comment, ...prev]);
+            setCommentCount(prev => prev + 1);
             return data.comment;
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to add comment');
@@ -50,6 +53,7 @@ const Answer = ({ answer, onError }) => {
         try {
             await customFetch.delete(`/qa-section/question/answer/comments/${commentId}`);
             setComments(prev => prev.filter(comment => comment._id !== commentId));
+            setCommentCount(prev => prev - 1);
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to delete comment');
             throw error;
@@ -81,6 +85,7 @@ const Answer = ({ answer, onError }) => {
                     ? { ...comment, replies: [data.reply, ...(comment.replies || [])] }
                     : comment
             ));
+
             return data.reply;
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to add reply');
@@ -95,6 +100,7 @@ const Answer = ({ answer, onError }) => {
                 ...comment,
                 replies: comment.replies?.filter(reply => reply._id !== replyId)
             })));
+            setCommentCount(prev => prev - 1); // Decrease comment count when reply is deleted
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to delete reply');
             throw error;
@@ -140,11 +146,6 @@ const Answer = ({ answer, onError }) => {
     return (
         <div className="pl-4 border-l-2 border-gray-300">
             <div className="flex items-center mb-2 justify-between">
-
-                {/* User information section with avatar, username and timestamp. 
-                    Displays the answer author's avatar with a fallback image,
-                    their username (or "Anonymous" if not available), and 
-                    the formatted creation date/time of the answer */}
                 <div className="flex items-center">
                     <UserAvatar
                         user={answer.author}
@@ -157,13 +158,8 @@ const Answer = ({ answer, onError }) => {
                             {new Date(answer.createdAt).toLocaleString()}
                         </p>
                     </div>
-
-
                 </div>
 
-                {/* Action menu for answer authors - displays a three-dot menu that reveals 
-                    a delete option when clicked. The menu is absolutely positioned and 
-                    only shown when showActionModal is true */}
                 {isAuthor && (
                     <div className="relative">
                         <BsThreeDotsVertical
@@ -190,10 +186,8 @@ const Answer = ({ answer, onError }) => {
                 <p className="text-[var(--grey--900)]">{answer.context}</p>
             </div>
 
-
-            {/* Like and comment buttons section */}
             <div className="flex items-center gap-4 mt-2">
-                <LikePost
+                <Like
                     totalLikes={answer.likes?.length || 0}
                     id={answer._id}
                     onError={handleCommentError}
@@ -202,14 +196,13 @@ const Answer = ({ answer, onError }) => {
                     onClick={toggleComments}
                     className="flex items-center gap-1 text-gray-500 hover:text-blue-500"
                 >
-                    <AiOutlineComment className='w-5 h-5' /> <span className='text-sm font-medium text-[var(--grey--900)] hover:text-blue-500'>{answer.comments?.length || 0} comments</span>
+                    <AiOutlineComment className='w-5 h-5' />
+                    <span className='text-sm font-medium text-[var(--grey--900)] hover:text-blue-500'>
+                        {commentCount} comments
+                    </span>
                 </button>
             </div>
 
-            {/* Comment section - Renders a CommentSection component when showComments is true.
-                Provides functionality for adding, deleting comments and replies,
-                as well as liking comments. The component receives the current comments array
-                and user object, along with callback handlers for all comment operations.*/}
             {showComments && (
                 <div className="mt-4">
                     <CommentSection
@@ -226,8 +219,6 @@ const Answer = ({ answer, onError }) => {
                 </div>
             )}
 
-            {/* Renders a confirmation modal when deleting an answer. Only shown to answer authors.
-                Handles the deletion process with loading state and allows cancellation. */}
             <DeleteModal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
