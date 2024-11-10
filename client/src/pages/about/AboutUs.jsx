@@ -17,8 +17,8 @@ function AboutUs() {
     ]
     return (
         <>
-            <div className="bg-[--body]  flex flex-col items-center text-center " data-aos="fade" data-aos-duration="1500">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center space-y-8 md:space-y-0">
+            <div className="bg-[--body] md:px-4  flex flex-col items-center text-center " data-aos="fade" data-aos-duration="1500">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center py-4 space-y-8 md:space-y-0">
                     {/* Left Window Image */}
                     <div className="w-full md:w-1/3">
                         <img
@@ -28,8 +28,8 @@ function AboutUs() {
                         />
                     </div>
                     {/* Text Content */}
-                    <div className="w-full md:w-1/2 px-4 flex flex-col items-center">
-                        <h1 className="text-4xl font-bold text-[var(--grey--900)]  mb-4 h2">
+                    <div className="w-full lg:w-1/2 px-4 flex flex-col items-center">
+                        <h1 className="text-4xl font-bold text-[var(--grey--900)]  mb-4 text-[1.6rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem]">
                             A Safe Place to Nurture Your Mind
                         </h1>
                         <p className="text-lg text-[--grey--800] mb-8">
@@ -43,29 +43,29 @@ function AboutUs() {
                 </div>
                 <div className='max-w-4xl flex flex-col md:flex-row items-center md:space-y-0 my-24 gap-6'>
                     <div className="w-full md:w-1/2 space-y-2" data-aos="fade-up" >
-                        <h1 className='text-[var(--grey--900)] h2'>What we do? </h1>
+                        <h1 className='text-[var(--grey--900)] text-[1.6rem] sm:text-[2.5rem] md:text-[3.5rem] md:leading-[3.5rem]'>What we do? </h1>
                         <hr />
-                        <p className='text-[var(--grey--800)]'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia nisi laudantium magni dolorum perferendis. Nobis dolor tenetur aliquam illo maxime?</p>
+                        <p className='text-[var(--grey--800)] text-justify lg:text-center'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia nisi laudantium magni dolorum perferendis. Nobis dolor tenetur aliquam illo maxime?</p>
                     </div>
                     <div className="w-full md:w-1/2 space-y-2" data-aos="fade-up" data-aos-delay="500">
-                        <h1 className='text-[var(--grey--900)] h2'>Why we do it?</h1>
+                        <h1 className='text-[var(--grey--900)] text-[1.6rem] sm:text-[2.5rem] md:text-[3.5rem] md:leading-[3.5rem]'>Why we do it?</h1>
                         <hr />
-                        <p className='text-[var(--grey--800)] '> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem esse dolore aliquam harum hic quia inventore blanditiis, nobis earum assumenda?</p>
+                        <p className='text-[var(--grey--800)] text-justify lg:text-center'> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem esse dolore aliquam harum hic quia inventore blanditiis, nobis earum assumenda?</p>
                     </div>
 
                 </div>
 
                 <div className=' max-w-7xl mx-auto px-4 md:px-0 bg-[--primary] text-white  rounded-[20px]' data-aos="fade-up">
                     <div className="flex flex-col md:flex-row items-center justify-between  md:space-y-0 md:space-x-8">
-                        <div className="md:w-1/2 space-y-6 p-8" data-aos="fade-up">
-                            <div className="bg-[var(--grey--900)] text-[--gray-700] text-sm inline-flex items-center py-2 px-3 rounded-full mb-4 glossy-effect-bar">
+                        <div className="md:w-1/2 md:space-y-6 md:px-4 py-8" data-aos="fade-up">
+                            <div className="bg-[var(--grey--900)] text-[--gray-700] text-[12px] sm:text-sm inline-flex items-center py-2 px-3 rounded-full mb-4 glossy-effect-bar">
                                 <span className="bg-[#01427a] text-white rounded-full w-4 h-4 flex items-center justify-center mr-2">N</span>
                                 <Link to={"https://www.nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1043&lid=359"} target='_blank' className='hover:text-[var(--ternery)]'>
                                     NMHP: National Mental Health Programme
                                 </Link>
                             </div>
-                            <h2 className=" font-bold h2" data-aos="fade-up">Creating Spaces for Healing and Growth.</h2>
-                            <p className="text-lg font-light mb-4 text-[var(--grey--600)]" >
+                            <h2 className=" font-boldtext-[1.6rem] text-[1.6rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem]" data-aos="fade-up">Creating Spaces for Healing and Growth.</h2>
+                            <p className="text-lg font-light mb-4 text-[var(--grey--600)] text-justify lg:text-center" >
                                 Our mission is to create safe and supportive environments where individuals can heal, grow, and thrive mentally and emotionally.
                             </p>
                             <hr />
@@ -73,19 +73,19 @@ function AboutUs() {
 
                         <div className="relative md:w-1/2 flex flex-col justify-start items-start p-12" data-aos="fade-left" data-aos-duration="1500">
                             <div
-                                className="w-full h-full bg-contain bg-center flex justify-center items-center "
-                                style={{ height: '30rem', }}>
+                                className="w-full h-16 bg-contain bg-center flex justify-center items-center sm:h-[30rem]"
+                                >
                                 <img src={img_2} alt="" />
                             </div>
                         </div>
 
                     </div>
-                    <div className='p-4 text-left' data-aos="fade-up">
-                        <h1 className="text-4xl font-bold mb-4 text-[var(--white-color)]" data-aos="fade-up">Our mission is to help you prioritize your mental health and find balance.</h1>
+                    <div className=' md:px-6 py-8 text-left' data-aos="fade-up">
+                        <h1 className="text-[1.6rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem]font-bold mb-4 text-[var(--white-color)]" data-aos="fade-up">Our mission is to help you prioritize your mental health and find balance.</h1>
                         <ol className="text-[var(--grey--600)] text-left space-y-4 text-base" data-aos="fade-up" data-aos-duration="1500">
                             {points.map((point) => {
                                 return (
-                                    <li key={point.text.split('').slice(0, 5)} className='flex gap-2 items-center'>
+                                    <li key={point.text.split('').slice(0, 5)} className='flex gap-2 items-center '>
                                         <AiOutlineArrowRight /> {point.text}
                                     </li>
                                 )

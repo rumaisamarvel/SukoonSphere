@@ -10,8 +10,8 @@ const ContactUs = () => {
         <>
             {/* <HeaderImg currentPage="Contact" bgImg={bgImg} /> */}
             <div className="flex flex-col lg:flex-row text-white rounded-lg overflow-hidden  max-w-7xl mx-auto " data-aos="fade" data-aos-duration="1500">
-                <div className="lg:w-1/2 p-8 space-y-6">
-                    <h1 className=" font-bold h2 text-[var(--grey--900)]">SukoonSphere HelpLine</h1>
+                <div className="lg:w-1/2 px-6 py-8 space-y-6">
+                    <h1 className=" font-boldtext-[1.6rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem] text-[var(--grey--900)]">SukoonSphere HelpLine</h1>
                     <p className="text-base text-[var(--grey--800)]">The SukoonSphere HelpLine provides the one-on-one help and information necessary to tackle tough challenges that you, your family or friends are facing. Call, Text or Chat with the HelpLine M-F, 10 a.m. - 10 p.m. ET. 988 crisis service available 24/7.</p>
                     <div className="space-y-6">
                         <div className="flex items-center">
@@ -55,7 +55,7 @@ export default ContactUs;
 const ContactForm = () => {
     return (
         <div className="flex justify-center  items-center p-6">
-            <div className="bg-[var(--primary)] shadow-lg p-8 w-full rounded-[20px]">
+            <div className="bg-[var(--primary)] shadow-lg px-6 py-8 w-full rounded-[20px]">
                 <h2 className="text-2xl font-semibold mb-4 text-[var(--white-color)] ">Tell us about your situations</h2>
                 <form className="space-y-2 text-[var(--grey--800)]  ">
                     <div className="form-control ">

@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { ForgetPassword, ResetPassword, SignUp } from '@/pages';
 import { signupAction } from '@/pages/auth/SignUp';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
-import SignIn, { signinAction } from '@/pages/auth/SignIn';
+import SignIn from '@/pages/auth/SignIn';
 import VerifyEmailAddres from '@/pages/auth/VerifyEmailAddres';
 import ChangePassword, { changePasswordAction } from '@/pages/auth/ChangePassword';
 import { forgetPasswordAction } from '@/pages/auth/ForgetPassword';
@@ -25,7 +25,6 @@ export const authRoutes = [
         <SignIn />
       </Suspense>
     ),
-    action: signinAction,
   },
   {
     path: "/user/verify-email",

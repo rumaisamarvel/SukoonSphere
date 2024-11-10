@@ -23,6 +23,7 @@ export const postsAction = async ({ request }) => {
 export const postsLoader = async () => {
   try {
     const { data } = await customFetch.get("/posts");
+    console.log({ data });
     return { posts: data };
   } catch (error) {
     console.log(error);
@@ -94,13 +95,20 @@ const Posts = () => {
           </div>
 
           {/* Posts List */}
-          {posts.map((post) => (
-            <PostCard
-              key={post._id}
-              post={post}
-              onPostDelete={handlePostDelete}
-            />
-          ))}
+          {posts?.length > 0 ? (
+            posts.map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                onPostDelete={handlePostDelete}
+              />
+            ))
+          ) : (
+            <div className="text-center p-8 bg-white rounded-[10px] shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Posts Yet</h3>
+              <p className="text-gray-600">Be the first one to share your thoughts with the community!</p>
+            </div>
+          )}
         </div>
 
         {/* Right Sidebar - Profile */}

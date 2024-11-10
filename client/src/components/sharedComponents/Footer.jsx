@@ -6,163 +6,174 @@ import { AiFillInstagram } from "react-icons/ai";
 import links from "@/utils/SharedComp/PageLinks";
 import { FaCircleDot } from "react-icons/fa6";
 import { Link, NavLink } from "react-router-dom";
+
+
 const Footer = () => {
   return (
-    // Main Containerg
-    <div className="bg-[#061c23] mt-6 px-6 ">
-      {/* Top Container */}
-      <div className="flex-col flex lg:flex-row lg:px-20 py-6 gap-4 ">
-        <div className="text-white flex flex-col gap-4 mt-4">
-          {/* Left container */}
-          <h1>Subscribe to People First Dispatch</h1>
-          <p>A weekly digest of latest news, articles and resources</p>
-          <div className="flex gap-4">
-            <input
-              type="search"
-              className="p-4 w-full bg-white rounded-[4px] "
-              placeholder="Enter Your Quries"
-            />
-            <button className="bg-[var(--brand--goldenrod)] text-[var(--grey--900)] rounded-[6px] px-6 py-2 text-sm leading-[1.32]">
-              Search
-            </button>
+    <footer className="bg-slate-900 mt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Top Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Newsletter Section */}
+          <div className="lg:col-span-5 space-y-6">
+            <h2 className="text-2xl font-bold text-white">
+              Subscribe to People First Dispatch
+            </h2>
+            <p className="text-slate-300">
+              A weekly digest of latest news, articles and resources
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                className="flex-1 rounded-[6px] px-4 py-3 bg-slate-800 text-white border border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter your email"
+              />
+              <button className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold px-6 py-3 rounded-[6px] transition-colors duration-200">
+                Subscribe
+              </button>
+            </div>
+            <p className="text-sm text-slate-400">
+              By continuing, you agree to NovaBenefits{" "}
+              <Link className="text-blue-400 hover:text-blue-300">Terms of Use</Link> and{" "}
+              <Link className="text-blue-400 hover:text-blue-300">Privacy Policy</Link>
+            </p>
+            <div className="flex items-center gap-4 mt-6">
+              <span className="text-slate-300">Follow us on</span>
+              <div className="flex gap-4">
+                <FaFacebook className="w-6 h-6 text-slate-400 hover:text-blue-400 transition-colors duration-200 cursor-pointer" />
+                <FaTwitter className="w-6 h-6 text-slate-400 hover:text-blue-400 transition-colors duration-200 cursor-pointer" />
+                <AiFillInstagram className="w-6 h-6 text-slate-400 hover:text-pink-400 transition-colors duration-200 cursor-pointer" />
+              </div>
+            </div>
           </div>
-          <p>
-            By continuing, you agree to NovaBenefits{" "}
-            <Link className="text-blue-600">Terms of Use</Link> and{" "}
-            <Link className="text-blue-600">Privacy Policy</Link>
-          </p>
-          <div className="flex gap-3  md:mt-0 cursor-pointer text-white">
-            <span>Follow us on </span>
-            <FaFacebook className="size-6 hover:text-[var(--ternery)]" />
-            <FaTwitter className="size-6 hover:text-[var(--ternery)]" />
-            <AiFillInstagram className="size-6 hover:text-[var(--ternery)]" />
+
+          {/* Vertical Divider */}
+          <div className="hidden lg:block lg:col-span-1">
+            <div className="h-full w-px bg-slate-700 mx-auto"></div>
+          </div>
+
+          {/* Links Sections */}
+          <div className="lg:col-span-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {/* Quick Links */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold tracking-wider text-slate-400 uppercase">
+                  Quick Links
+                </h3>
+                <ul className="space-y-3">
+                  {links.map((link, index) => (
+                    <li key={`${link.name}-${index}`}>
+                      <span 
+                        className="text-slate-300  font-medium"
+                      >
+                        {link.name}
+                      </span>
+                      {link.sublinks && (
+                        <ul className="mt-2 ml-4 space-y-2">
+                          {link.sublinks.map((sublink) => (
+                            <li key={sublink.name} className="flex items-center gap-2">
+                              <FaCircleDot className="w-2 h-2 text-slate-500" />
+                              <NavLink
+                                to={sublink.address}
+                                className="text-slate-400 hover:text-amber-400 text-sm"
+                              >
+                                {sublink.name}
+                              </NavLink>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Know Us */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold tracking-wider text-slate-400 uppercase">
+                  Know Us
+                </h3>
+                <ul className="space-y-3">
+                  <li>
+                    <Link
+                      to="about/mental-health"
+                      className="text-slate-300 hover:text-amber-400 font-medium"
+                    >
+                      About Mental Health
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="about/mental-health"
+                      className="text-slate-300 hover:text-amber-400 font-medium"
+                    >
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/about/our-team"
+                      className="text-slate-300 hover:text-amber-400 font-medium"
+                    >
+                      Our Review Board
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to=""
+                      className="text-slate-300 hover:text-amber-400 font-medium"
+                    >
+                      Contact Page
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to=""
+                      className="text-slate-300 hover:text-amber-400 font-medium"
+                    >
+                      Terms of Service
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* RECO BY NMHP */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold tracking-wider text-slate-400 uppercase">
+                  RECO BY NMHP
+                </h3>
+                <ul className="space-y-3">
+                  <li>
+                    <Link
+                      to="https://www.nmhp.org/"
+                      target="_blank"
+                      className="text-slate-300 hover:text-amber-400 font-medium"
+                    >
+                      National Mental Health Program
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="bg-[var(--grey--900)] w-[1px] mx-[60px]"></div>
-        <div className="flex flex-col sm:flex-row gap-8 ">
-          {/* Right Container */}
-          <div className="flex flex-col gap-3 sm:justify-between text-white mt-2">
-            <span className="text-gray-500 uppercase font-extrabold text-lg">
-              Quick Links
-            </span>
-            <ul className="flex flex-col gap-3 sm:justify-between mt-2">
-              {links.map((link, index) => (
-                <li
-                  className="text-base font-extrabold"
-                  key={`${link.name}-${index}`}
-                >
-                  <NavLink
-                    to={link.address}
-                    className="text-[var(--white-color)] hover:text-[var(--ternery)]"
-                  >
-                    {link.name}
-                  </NavLink>
 
-                  {link.sublinks && (
-                    <ul>
-                      {link.sublinks.map((sublink) => (
-                        <li key={sublink.name} className="flex gap-2 font-normal items-center ">
-                          <FaCircleDot className="text-[.6rem]" />
-                          <NavLink to={sublink.address}
-
-                          >
-                            <span>{sublink.name}</span>
-                          </NavLink>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
+        {/* Bottom Section */}
+        <div className="mt-12 pt-8 border-t border-slate-800">
+          <div className="text-slate-400 space-y-4">
+            <p className="text-sm">
+              SukoonSphere's content is for informational and educational purposes
+              only. Our website is not intended to be a substitute for
+              professional medical advice, diagnosis, or treatment.
+            </p>
+            <p className="text-sm">© 2024 Inc. — All rights reserved.</p>
           </div>
-
-          {/* <ul className="flex flex-col gap-3 sm:justify-between text-white mt-2">
-            <span className="text-gray-500 uppercase font-extrabold text-lg">
-              Quick Links
-            </span>
-            {links.map((link) =>
-              link.sublinks?.map((sublink, index) => (
-
-                <li className="text-white font-extrabold" key={sublink.name}>
-                  <NavLink
-                    to={sublink.address}
-                    className="hover:text-[var(--ternery)]"
-                  >
-                    {sublink.name}
-                  </NavLink>
-                </li>
-              ))
-            )}
-          </ul> */}
-
-          <ul className="space-y-3 mt-2">
-            <span className="text-gray-500 uppercase font-extrabold text-lg">
-              Know Us
-            </span>
-            <li className="text-base font-extrabold">
-              <Link
-                to="about/mental-health"
-                className="text-[var(--white-color)] hover:text-[var(--ternery)]"
-              >
-                {" "}
-                About Mental Health
-              </Link>
-            </li>
-            <li className="text-base font-extrabold">
-              <Link
-                to="about/mental-health"
-                className="text-[var(--white-color)] hover:text-[var(--ternery)]"
-              >
-                {" "}
-                About Us
-              </Link>
-            </li>
-            <li className="text-base font-extrabold">
-              <Link
-                to="/about/our-team"
-                className="text-[var(--white-color)] hover:text-[var(--ternery)]"
-              >
-                {" "}
-                Our Review Board
-              </Link>
-            </li>
-            <li className="text-white font-extrabold">
-              <Link to=""> Contact Page</Link>
-            </li>
-            <li className="text-base font-extrabold">
-              <Link
-                to=""
-                className="text-[var(--white-color)] hover:text-[var(--ternery)]"
-              >
-                {" "}
-                Terms of Service
-              </Link>
-            </li>
-          </ul>
-          <ul>
-            <span className="text-gray-500 uppercase font-extrabold text-lg">
-              RECO BY NMHP
-            </span>
-            <li>
-              <Link></Link>
-            </li>
-          </ul>
         </div>
       </div>
-      {/* Bottom Container */}
-      <div className="bg-gray-500  h-[.1px] mt-[28px] mb-[18px] mx-20"></div>
-      <div>
-        <div className="bg-[#061c23] sm:px-20 text-gray-500 ">
-          <p className="text-sm">
-            SukoonSphere's content is for informational and educational purposes
-            only. Our website is not intended to be a substitute for
-            professional medical advice, diagnosis, or treatment.
-          </p>
-          <p>© 2024 Inc. — All rights reserved.</p>
-        </div>
-      </div>
-    </div>
+    </footer>
   );
 };
+
+
+
 export default Footer;

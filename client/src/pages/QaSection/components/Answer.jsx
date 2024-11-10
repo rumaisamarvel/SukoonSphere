@@ -4,7 +4,7 @@ import UserAvatar from '@/components/shared/UserAvatar';
 import DeleteModal from '@/components/shared/DeleteModal';
 import customFetch from '@/utils/customFetch';
 import { useUser } from '@/context/UserContext';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { AiOutlineComment } from 'react-icons/ai';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
@@ -17,13 +17,13 @@ const Answer = ({ answer, onError }) => {
     const { user } = useUser();
     const isAuthor = user?._id === answer.author?.userId;
 
-    const handleCommentError = (error) => {
+    const handleCommentError = useCallback((error) => {
         onError?.(error);
-    };
+    }, [onError]);
 
     if (!answer) return null;
 
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         try {
             const { data } = await customFetch.get(`/qa-section/answer/${answer._id}/all-comments`);
             setComments(data.comments || []);
@@ -31,10 +31,9 @@ const Answer = ({ answer, onError }) => {
             handleCommentError(error?.response?.data?.msg || 'Failed to fetch answer');
             throw error;
         }
-    }
+    }, [answer._id, handleCommentError]);
 
-
-    const handleAddComment = async (content) => {
+    const handleAddComment = useCallback(async (content) => {
         try {
             const { data } = await customFetch.post(`/qa-section/answer/${answer._id}/add-comment`, {
                 content
@@ -45,9 +44,9 @@ const Answer = ({ answer, onError }) => {
             handleCommentError(error?.response?.data?.msg || 'Failed to add comment');
             throw error;
         }
-    };
+    }, [answer._id, handleCommentError]);
 
-    const handleDeleteComment = async (commentId) => {
+    const handleDeleteComment = useCallback(async (commentId) => {
         try {
             await customFetch.delete(`/qa-section/question/answer/comments/${commentId}`);
             setComments(prev => prev.filter(comment => comment._id !== commentId));
@@ -55,9 +54,68 @@ const Answer = ({ answer, onError }) => {
             handleCommentError(error?.response?.data?.msg || 'Failed to delete comment');
             throw error;
         }
-    };
+    }, [handleCommentError]);
 
-    const handleDeleteAnswer = async () => {
+    const handleEditComment = useCallback(async (commentId, content) => {
+        try {
+            const { data } = await customFetch.patch(`/qa-section/answer/comments/${commentId}`, {
+                content
+            });
+            setComments(prev => prev.map(comment =>
+                comment._id === commentId ? { ...comment, content } : comment
+            ));
+            return data.comment;
+        } catch (error) {
+            handleCommentError(error?.response?.data?.msg || 'Failed to edit comment');
+            throw error;
+        }
+    }, [handleCommentError]);
+
+    const handleReplyToComment = useCallback(async (commentId, content) => {
+        try {
+            const { data } = await customFetch.post(`/qa-section/answer/comments/${commentId}/replies`, {
+                content,
+            });
+            setComments(prev => prev.map(comment =>
+                comment._id === commentId
+                    ? { ...comment, replies: [data.reply, ...(comment.replies || [])] }
+                    : comment
+            ));
+            return data.reply;
+        } catch (error) {
+            handleCommentError(error?.response?.data?.msg || 'Failed to add reply');
+            throw error;
+        }
+    }, [handleCommentError]);
+
+    const handleDeleteReply = useCallback(async (replyId) => {
+        try {
+            await customFetch.delete(`/qa-section/question/answer/comments/reply/${replyId}`);
+            setComments(prev => prev.map(comment => ({
+                ...comment,
+                replies: comment.replies?.filter(reply => reply._id !== replyId)
+            })));
+        } catch (error) {
+            handleCommentError(error?.response?.data?.msg || 'Failed to delete reply');
+            throw error;
+        }
+    }, [handleCommentError]);
+
+    const handleLikeComment = useCallback(async (commentId) => {
+        try {
+            const { data } = await customFetch.post(`/qa-section/answer/comments/${commentId}/like`);
+            setComments(prev => prev.map(comment =>
+                comment._id === commentId
+                    ? { ...comment, likes: data.likes }
+                    : comment
+            ));
+        } catch (error) {
+            handleCommentError(error?.response?.data?.msg || 'Failed to like comment');
+            throw error;
+        }
+    }, [handleCommentError]);
+
+    const handleDeleteAnswer = useCallback(async () => {
         try {
             setIsDeleting(true);
             await customFetch.delete(`/qa-section/question/answer/${answer._id}`);
@@ -68,28 +126,25 @@ const Answer = ({ answer, onError }) => {
         } finally {
             setIsDeleting(false);
         }
-    };
+    }, [answer._id, handleCommentError]);
 
-    useEffect(() => {
-        if (showComments) {
-            fetchComments();
-        }
-    }, [showComments]);
-
-    const handleDeleteReply = async (replyId) => {
-        try {
-            await customFetch.delete(`/qa-section/question/answer/comments/reply/${replyId}`);
-        } catch (error) {
-            handleCommentError(error?.response?.data?.msg || 'Failed to delete reply');
-            throw error;
-        }
-    }
+    const toggleComments = useCallback(() => {
+        setShowComments(prev => {
+            if (!prev) {
+                fetchComments();
+            }
+            return !prev;
+        });
+    }, [fetchComments]);
 
     return (
         <div className="pl-4 border-l-2 border-gray-300">
-
-            {/* Display Answer Author and Content */}
             <div className="flex items-center mb-2 justify-between">
+
+                {/* User information section with avatar, username and timestamp. 
+                    Displays the answer author's avatar with a fallback image,
+                    their username (or "Anonymous" if not available), and 
+                    the formatted creation date/time of the answer */}
                 <div className="flex items-center">
                     <UserAvatar
                         user={answer.author}
@@ -97,18 +152,23 @@ const Answer = ({ answer, onError }) => {
                         fallbackImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWXzCSPkpN-TPug9XIsssvBxZQHkZEhjoGfg&s"
                     />
                     <div className="ml-2">
-                        <p className="font-medium">{answer.author?.username || "Anonymous"}</p>
+                        <p className="font-medium">{answer.author?.username}</p>
                         <p className="text-xs text-gray-500">
-                            {new Date(answer.createdAt).toLocaleDateString()}
+                            {new Date(answer.createdAt).toLocaleString()}
                         </p>
                     </div>
+
+
                 </div>
 
+                {/* Action menu for answer authors - displays a three-dot menu that reveals 
+                    a delete option when clicked. The menu is absolutely positioned and 
+                    only shown when showActionModal is true */}
                 {isAuthor && (
                     <div className="relative">
                         <BsThreeDotsVertical
                             className="text-black cursor-pointer"
-                            onClick={() => setShowActionModal(!showActionModal)}
+                            onClick={() => setShowActionModal(prev => !prev)}
                         />
                         {showActionModal && (
                             <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
@@ -126,11 +186,12 @@ const Answer = ({ answer, onError }) => {
                     </div>
                 )}
             </div>
+            <div className='mt-2'>
+                <p className="text-[var(--grey--900)]">{answer.context}</p>
+            </div>
 
-            {/* Display Answer Content */}
-            <p className="text-[var(--grey--900)]">{answer.context}</p>
 
-            {/* Display Interaction Buttons */}
+            {/* Like and comment buttons section */}
             <div className="flex items-center gap-4 mt-2">
                 <LikePost
                     totalLikes={answer.likes?.length || 0}
@@ -138,29 +199,35 @@ const Answer = ({ answer, onError }) => {
                     onError={handleCommentError}
                 />
                 <button
-                    onClick={() => setShowComments(!showComments)}
+                    onClick={toggleComments}
                     className="flex items-center gap-1 text-gray-500 hover:text-blue-500"
                 >
-                    <AiOutlineComment /> {answer.comments?.length || 0}
+                    <AiOutlineComment className='w-5 h-5' /> <span className='text-sm font-medium text-[var(--grey--900)] hover:text-blue-500'>{answer.comments?.length || 0} comments</span>
                 </button>
             </div>
 
-            {/* Display Comments */}
+            {/* Comment section - Renders a CommentSection component when showComments is true.
+                Provides functionality for adding, deleting comments and replies,
+                as well as liking comments. The component receives the current comments array
+                and user object, along with callback handlers for all comment operations.*/}
             {showComments && (
                 <div className="mt-4">
                     <CommentSection
-                        comments={comments || []}
+                        comments={comments}
                         onAddComment={handleAddComment}
-                        onEditComment={() => { }}
+                        onEditComment={handleEditComment}
                         onDeleteComment={handleDeleteComment}
-                        onLikeComment={() => { }}
-                        onReplyToComment={() => { }}
+                        onLikeComment={handleLikeComment}
+                        onReplyToComment={handleReplyToComment}
                         onDeleteReply={handleDeleteReply}
                         currentUser={user}
                         type="answer"
                     />
                 </div>
             )}
+
+            {/* Renders a confirmation modal when deleting an answer. Only shown to answer authors.
+                Handles the deletion process with loading state and allows cancellation. */}
             <DeleteModal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}

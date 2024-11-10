@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { postAPI } from '@/utils/apiCalls';
@@ -6,6 +6,18 @@ import { postAPI } from '@/utils/apiCalls';
 const LikePost = ({ totalLikes = 0, id }) => {
     const [isLiked, setIsLiked] = useState(false);
     const [likes, setLikes] = useState(totalLikes);
+
+    useEffect(() => {
+        const checkIfLiked = async () => {
+            try {
+                const response = await postAPI.checkPostLike(id);
+                setIsLiked(response.isLiked);
+            } catch (error) {
+                console.error('Error checking post like status:', error);
+            }
+        };
+        checkIfLiked();
+    }, [id]);
 
     const handleLike = async () => {
         try {

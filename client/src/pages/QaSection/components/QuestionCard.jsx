@@ -50,7 +50,8 @@ const QuestionCard = ({ question, onLoadMore }) => {
                             {question.author?.username}
                         </p>
                         <p className="text-gray-500 text-sm">
-                            {new Date(question.createdAt).toLocaleDateString()}
+                            {/* {question.createdAt} */}
+                            {new Date(Date.now()).toLocaleDateString()}
                         </p>
                     </div>
                 </div>
@@ -102,7 +103,7 @@ const QuestionCard = ({ question, onLoadMore }) => {
             ))}
 
             {answers.length < question.answers?.length
-                ? (
+                && (
                     <button
                         className="text-blue-500"
                         onClick={handleLoadMore}
@@ -110,9 +111,6 @@ const QuestionCard = ({ question, onLoadMore }) => {
                         Load more
                     </button>
 
-                )
-                : (
-                    <p className="text-[var(--primary)] text-center py-4">No answers yet</p>
                 )}
 
             <DeleteModal

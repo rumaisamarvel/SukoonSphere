@@ -6,7 +6,7 @@ import { BsFillTriangleFill } from 'react-icons/bs';
 function DesktopNav({ links }) {
   return (
     <div className="hidden lg:flex justify-center flex-grow">
-      <ul className="flex mt-10 h-16 gap-5 items-center">
+      <ul className="flex mt-6 h-12 gap-5 items-center">
         {links.map((link, index) => (
           <NavItem key={link.name} link={link} index={index} />
         ))}
@@ -18,7 +18,6 @@ function DesktopNav({ links }) {
 const NavItem = ({ link, index }) => (
   <div className="group relative h-full align-middle">
     <NavLink to={link.address} className="flex group items-center justify-center gap-1">
-      {link.icon}
       <span className="ml-2">{link.name}</span>
       {index !== 0 && (
         <MdOutlineKeyboardArrowUp className="size-[1.4rem] ml-1 group-hover:rotate-180 transition-all" />

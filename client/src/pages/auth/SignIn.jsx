@@ -1,27 +1,33 @@
 import React, { useState } from "react";
 import customFetch from "@/utils/customFetch";
-import { Form, redirect, useActionData, useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 import img_bg from "../../assets/images/bg_login.png";
 import { Link } from "react-router-dom";
 import { GrLogin } from "react-icons/gr";
 import { InputComponent } from "@/components/sharedComponents/FormRow";
 import { useUser } from '@/context/UserContext';
 
-export const signinAction = async ({ request }) => {
-  const result = await request.formData();
-  const data = Object.fromEntries(result);
-  try {
-    const response = await customFetch.post("auth/login", data);
-    console.log({ response })
-    return redirect("/posts");
-
-  } catch (error) {
-    return { error: error?.response?.data?.msg || "Something went wrong" };
-  }
-};
-
 const SignIn = () => {
-  const { login, isLoading, error } = useUser();
+  const { login, isLoading } = useUser();
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    try {
+      const result = await login(data);
+      if (result.success) {
+        navigate('/posts');
+      } else if (result.error) {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError('An unexpected error occurred');
+      console.error(error);
+    }
+  };
 
   return (
     <div className="min-h-screen  flex  items-center justify-center p-4 ">
@@ -32,18 +38,24 @@ const SignIn = () => {
             <img src="https://cdn-icons-png.flaticon.com/512/6681/6681204.png" alt="logo" className="w-14  h-14" />
           </div>
           <Form
-            method="post"
+            onSubmit={handleSubmit}
             className="flex flex-col gap-4 p-4 rounded-[10px] w-full max-w-[500px] mx-auto"
           >
-            <p className="text-red-400 text-center">
-              {error && error.split(",")[0]}
-            </p>
+            {error && (
+              <p className="text-red-400 text-center">
+                {error.split(",")[0]}
+              </p>
+            )}
             <h1 className="font-bold text-[var(--white-color)] text-center text-2xl">Sign In</h1>
 
             <InputComponent type="email" name="email" placeholder="Enter an email.." />
             <InputComponent type="password" name="password" placeholder="Enter password.." />
-            <button type="submit" className="btn-2 w-full flex items-center justify-center gap-2">
-              Sign In
+            <button
+              type="submit"
+              className="btn-2 w-full flex items-center justify-center gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Sign In'}
               <GrLogin />
             </button>
             <Link to="/auth/sign-up" className="text-[var(--white-color)] text-center">

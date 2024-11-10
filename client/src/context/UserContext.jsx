@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import React, { createContext, useContext, useReducer, useState } from 'react';
 import customFetch from '@/utils/customFetch';
 
 const UserContext = createContext();
 
 const initialState = {
     user: null,
-    isLoading: true,
+    isLoading: false,
     error: null
 };
 
@@ -42,22 +42,6 @@ const userReducer = (state, action) => {
 export const UserProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    // Get current user details on mount
-    useEffect(() => {
-        getCurrentUser();
-    }, [isLoggedIn]);
-
-    const getCurrentUser = async () => {
-        try {
-            dispatch({ type: 'SET_LOADING', payload: true });
-            const { data } = await customFetch.get('/user');
-            console.log({ data })
-            dispatch({ type: 'SET_USER', payload: data });
-        } catch (error) {
-            dispatch({ type: 'SET_ERROR', payload: error.response?.data?.msg || 'Failed to fetch user details' });
-        }
-    };
 
     // User actions
     const login = async (userData) => {
@@ -100,8 +84,7 @@ export const UserProvider = ({ children }) => {
             ...state,
             login,
             logout,
-            updateUser,
-            getCurrentUser
+            updateUser
         }}>
             {children}
         </UserContext.Provider>

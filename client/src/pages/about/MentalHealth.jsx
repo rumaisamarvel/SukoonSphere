@@ -7,16 +7,16 @@ function MentalHealth() {
     return (
         <>
             {/* <HeaderImg currentPage="About / Mental Health" bgImg={bgImg} /> */}
-            <div className="p-8   rounded-lg max-w-7xl mx-auto space-y-16">
-                <h1 className="text-lg font-semibold mb-2 h2 text-[var(--grey--900)]">Mental health</h1>
+            <div className="p-4  lg:p-8 rounded-lg max-w-7xl mx-auto space-y-16">
+                <h1 className="text-lg font-semibold mb-2 text-[2rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem] text-[var(--grey--900)]">Mental health</h1>
                 {/* Overview Section */}
                 <section className="mb-8 grid grid-cols-12 gap-6" data-aos="fade-up" data-aos-duration="1500">
-                    <div className="col-span-6 gap-4">
+                    <div className="col-span-12 order-2 lg:order-1 lg:col-span-6 gap-4">
                         <img src="https://media.licdn.com/dms/image/D5612AQEAqaIf0Cs-Hg/article-cover_image-shrink_720_1280/0/1710397777437?e=2147483647&v=beta&t=soZaslp-9gmLUCwNt2SiEgi46mgsyI7yBQrVm1L3fW8"
                             alt="Image loading..."
                             className='rounded-[10px]' />
                     </div>
-                    <div className="col-span-6">
+                    <div className="col-span-12 order-2 lg:order-1 lg:col-span-6 ">
                         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
                             {MentalHeathSummary.overview.title}
                         </h2>
@@ -30,7 +30,7 @@ function MentalHealth() {
                 {/* Symptoms Section */}
 
                 <section className="mb-8 grid grid-cols-12 gap-6" data-aos="fade-up" data-aos-duration="1500">
-                    <div className="col-span-6 gap-4">
+                    <div className="col-span-12 order-2 lg:order-1 lg:col-span-6 gap-4">
                         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
                             {MentalHeathSummary.symptoms.title}
                         </h2>
@@ -42,7 +42,7 @@ function MentalHealth() {
                             ))}
                         </ul>
                     </div>
-                    <div className="col-span-6">
+                    <div className="col-span-12 order-1 lg:order-2 lg:col-span-6">
                         <img src=" https://www.beyondpsychub.com/wp-content/uploads/2023/01/SIGNS-AND-SYMPTOMS-OF-MENTAL-HEALTH-DISORDERS-1.png"
                             alt="Image loading..."
                             className='rounded-[10px]' />
@@ -81,12 +81,12 @@ function MentalHealth() {
 
                 {/* Causes Section */}
                 <section className="mb-8 grid grid-cols-12 gap-6" data-aos="fade-up" data-aos-duration="1500">
-                    <div className="col-span-6">
+                    <div className="col-span-12 order-1 lg:order-1 lg:col-span-6">
                         <img src=" https://lirp.cdn-website.com/b12c687e/dms3rep/multi/opt/infographic-on-20-ways-to-beat-mental-stress-640w.png"
                             alt="Image loading..."
                             className='rounded-[10px]' />
                     </div>
-                    <div className="col-span-6 gap-4">
+                    <div className="col-span-12 order-2 lg:order-2 lg:col-span-6 gap-4">
                         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
                             {MentalHeathSummary.causes.title}
                         </h2>
@@ -105,7 +105,7 @@ function MentalHealth() {
                 {/* Risk Factors Section */}
 
                 <section className="mb-8 grid grid-cols-12 gap-6" data-aos="fade-up" data-aos-duration="1500">
-                    <div className="col-span-6 gap-4">
+                    <div className="col-span-12 order-2 lg:order-1 lg:col-span-6 gap-4">
                         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
                             {MentalHeathSummary.riskFactors.title}
                         </h2>
@@ -117,7 +117,7 @@ function MentalHealth() {
                         </ul>
                         <p className="text-[var(--grey--800)] text-base mt-4">{MentalHeathSummary.riskFactors.note}</p>
                     </div>
-                    <div className="col-span-6">
+                    <div className="col-span-12 order-1 lg:order-2 lg:col-span-6">
                         <img src=" https://cdn.slidesharecdn.com/ss_thumbnails/riskfactorsindevelopmentofmentalhealthillness-211004171809-thumbnail.jpg?width=640&height=640&fit=bounds"
                             alt="Image loading..."
                             className='rounded-[10px]' />
@@ -126,12 +126,12 @@ function MentalHealth() {
 
                 {/* Complications Section */}
                 <section className="mb-8 grid grid-cols-12 gap-6" data-aos="fade-up" data-aos-duration="1500">
-                    <div className="col-span-6">
+                    <div className="col-span-12 order-1 lg:order-1 lg:col-span-6">
                         <img src="https://d2jx2rerrg6sh3.cloudfront.net/images/Article_Images/ImageForArticle_22028_16430272124432966.jpg"
                             alt="Image loading..."
                             className='rounded-[10px]' />
                     </div>
-                    <div className="col-span-6 gap-4">
+                    <div className="col-span-12 order-2 lg:order-2 lg:col-span-6 gap-4">
                         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
                             {MentalHeathSummary.complications.title}
                         </h2>
@@ -147,7 +147,7 @@ function MentalHealth() {
                 {/* Prevention Section */}
 
                 <section className="mb-8 grid grid-cols-12 gap-6" data-aos="fade-up" data-aos-duration="1500">
-                    <div className="col-span-6 gap-4">
+                    <div className="col-span-12 order-2 lg:order-1 lg:col-span-6 gap-4">
 
                         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
                             {MentalHeathSummary.prevention.title}
@@ -161,7 +161,7 @@ function MentalHealth() {
                             ))}
                         </ul>
                     </div>
-                    <div className="col-span-6">
+                    <div className="col-span-12 order-1 lg:order-2 lg:col-span-6">
                         <img src="https://www.gigadocs.com/blog/wp-content/uploads/2020/09/Suicide-Prevention-Caring-for-Mental-Health-and-Depression-to-Fight-Covid-19-.jpg"
                             alt="Image loading..."
                             className='rounded-[10px]' />
