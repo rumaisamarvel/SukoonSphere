@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const replySchema = new mongoose.Schema(
+    const replySchema = new mongoose.Schema(
   {
     commentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -40,6 +40,12 @@ const replySchema = new mongoose.Schema(
     commentUserAvatar: {
       type: String,
     },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     deleted: {
       type: Boolean,
       default: false,

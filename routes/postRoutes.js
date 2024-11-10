@@ -17,7 +17,9 @@ import {
   getAllCommentsByPostId,
   getAllPosts,
   getAllPostsByUserId,
-  getAllRepliesBYCommentId,
+  getAllRepliesByCommentId,
+  likePostComment,
+  likePostCommentReply,
   likePosts,
 } from "../controllers/postController.js";
 
@@ -30,22 +32,44 @@ router.post(
 );
 router.get("/", getAllPosts);
 router.patch("/:id/like", authenticateUser, validateIdParam, likePosts);
+router.patch(
+  "/comments/:id/like",
+  authenticateUser,
+  validateIdParam,
+  likePostComment
+);
+router.patch(
+  "/comments/replies/:id/like",
+  authenticateUser,
+  validateIdParam,
+  likePostCommentReply
+);
 router.post(
   "/:id/comments",
   authenticateUser,
   validateIdParam,
   createPostComment
 );
-router.get(
-  "/user/:id",
+router.get("/user/:id", authenticateUser, validateIdParam, getAllPostsByUserId);
+router.get("/:id/comments", validateIdParam, getAllCommentsByPostId);
+router.post(
+  "/comments/:id/replies",
   authenticateUser,
   validateIdParam,
-  getAllPostsByUserId
+  createReply
 );
-router.get("/:id/comments", validateIdParam, getAllCommentsByPostId);
-router.post("/comments/:id/replies", authenticateUser, validateIdParam, createReply);
-router.get("/comments/:id/replies", validateIdParam, getAllRepliesBYCommentId);
+router.get("/comments/:id/replies", validateIdParam, getAllRepliesByCommentId);
 router.delete("/:id", authenticateUser, validateIdParam, deletePost);
-router.delete("/comments/:id", authenticateUser, validateIdParam, deletePostComment);
-router.delete("/comments/replies/:id", authenticateUser, validateIdParam, deletePostCommentReply);
+router.delete(
+  "/comments/:id",
+  authenticateUser,
+  validateIdParam,
+  deletePostComment
+);
+router.delete(
+  "/comments/replies/:id",
+  authenticateUser,
+  validateIdParam,
+  deletePostCommentReply
+);
 export default router;

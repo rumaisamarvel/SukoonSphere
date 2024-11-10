@@ -8,6 +8,8 @@ import PostReplies from "../models/postReplyModel.js";
 import postModel from "../models/postModel.js";
 import postReplyModel from "../models/postReplyModel.js";
 import mongoose from "mongoose";
+import User from "../models/userModel.js";
+
 export const createPost = async (req, res) => {
   const newPost = {
     createdBy: req.user.userId,
@@ -21,16 +23,27 @@ export const createPost = async (req, res) => {
     newPost.imageUrl = response.secure_url;
     newPost.imagePublicId = response.public_id;
   }
-  await Post.create(newPost);
-  res.status(StatusCodes.CREATED).json({ msg: "Post uploaded sucessesfully" });
+  const post = await Post.create(newPost);
+
+  // Add post ID to user's posts array
+  await User.findByIdAndUpdate(
+    req.user.userId,
+    { $push: { posts: post._id } },
+    { new: true }
+  );
+
+  res.status(StatusCodes.CREATED).json({ msg: "Post uploaded successfully" });
 };
 export const getAllPosts = async (req, res) => {
-  const posts = await Post.find({});
-  const postsWithLikes = posts.map((post) => ({
-    ...post.toObject(),
-    totalLikes: post.likes ? post.likes.length : 0,
-  }));
-  res.status(StatusCodes.OK).json({ posts: postsWithLikes });
+  const posts = await Post.aggregate([
+    {
+      $addFields: {
+        totalLikes: { $size: { $ifNull: ["$likes", []] } },
+        totalComments: { $size: { $ifNull: ["$comments", []] } },
+      },
+    },
+  ]);
+  res.status(StatusCodes.OK).json({ posts });
 };
 
 export const likePosts = async (req, res) => {
@@ -75,20 +88,35 @@ export const createPostComment = async (req, res) => {
     comment,
   });
 };
-
 export const getAllCommentsByPostId = async (req, res) => {
   const { id: postId } = req.params;
-  const postComments = await PostComments.find({ postId });
-  res.status(StatusCodes.OK).json(postComments);
+  const postComments = await PostComments.find({ postId })
+    .select("-__v")
+    .lean();
+
+  const commentsWithReplies = postComments.map((comment) => ({
+    ...comment,
+    totalReplies: (comment.replies || []).length,
+  }));
+
+  res.status(StatusCodes.OK).json({ comments: commentsWithReplies });
 };
 export const getAllPostsByUserId = async (req, res) => {
-  const {  userId } = req.user;
-  const posts = await postModel.find({ createdBy: userId });
-  const postsWithLikes = posts.map((post) => ({
-    ...post.toObject(),
-    totalLikes: post.likes ? post.likes.length : 0,
+  const { userId } = req.user;
+  const posts = await postModel
+    .find({ createdBy: userId })
+    .select("-__v")
+    .lean();
+
+  const postsWithCounts = posts.map((post) => ({
+    ...post,
+    totalLikes: (post.likes || []).length,
+    totalComments: (post.comments || []).length,
   }));
-  res.status(StatusCodes.OK).json({ posts: postsWithLikes });
+
+  res.status(StatusCodes.OK).json({
+    posts: postsWithCounts,
+  });
 };
 export const createReply = async (req, res) => {
   const { content } = req.body;
@@ -103,6 +131,7 @@ export const createReply = async (req, res) => {
 
   const reply = await PostReplies.create({
     commentId: comment ? comment._id : parentReply.commentId,
+    parentId: parentReply ? parentReply._id : null,
     createdBy: req.user.userId,
     username: req.user.username,
     userAvatar: req.user.avatar,
@@ -112,21 +141,34 @@ export const createReply = async (req, res) => {
     commentUserAvatar: comment ? comment.userAvatar : parentReply.userAvatar,
   });
 
+  if (comment) {
+    comment.replies.push(reply._id);
+    await comment.save();
+  }
+
   res.status(StatusCodes.CREATED).json({
     message: "Reply created successfully",
     reply,
   });
 };
-export const getAllRepliesBYCommentId = async (req, res) => {
+export const getAllRepliesByCommentId = async (req, res) => {
   const { id: commentId } = req.params;
-  const replies = await postReplyModel.find({ commentId });
-  if (replies.length === 0) {
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "No replies found for this comment", replies: [] });
+
+  const comment = await PostComments.findById(commentId);
+  if (!comment) {
+    throw new BadRequestError("Comment not found");
   }
 
-  res.status(StatusCodes.OK).json({ replies });
+  const replies = await postReplyModel
+    .find({ commentId })
+    .select("-__v")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  res.status(StatusCodes.OK).json({
+    replies,
+    totalReplies: replies.length,
+  });
 };
 
 export const deletePost = async (req, res) => {
@@ -146,7 +188,7 @@ export const deletePost = async (req, res) => {
   ) {
     throw new UnauthorizedError("You are not authorized to delete this post");
   }
-  console.log(post.createdBy.toString(), req.user.userId);
+
   const comments = await PostComments.find({ postId }).session(session);
 
   const commentIds = comments.map((comment) => comment._id);
@@ -156,6 +198,12 @@ export const deletePost = async (req, res) => {
 
   await PostComments.deleteMany({ postId }).session(session);
   await Post.findByIdAndDelete(postId).session(session);
+
+  await User.findByIdAndUpdate(
+    req.user.userId,
+    { $pull: { posts: postId } },
+    { session }
+  );
 
   await session.commitTransaction();
 
@@ -189,6 +237,12 @@ export const deletePostComment = async (req, res) => {
   // Delete the comment itself
   await PostComments.findByIdAndDelete(commentId).session(session);
 
+  await Post.findByIdAndUpdate(
+    comment.postId,
+    { $pull: { comments: commentId } },
+    { session }
+  );
+
   await session.commitTransaction();
   res
     .status(StatusCodes.OK)
@@ -204,6 +258,73 @@ export const deletePostCommentReply = async (req, res) => {
   if (reply.createdBy.toString() !== req.user.userId) {
     throw new UnauthorizedError("You are not authorized to delete this reply");
   }
-  await PostReplies.findByIdAndDelete(replyId);
+
+  // Start a session for transaction
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  await PostReplies.findByIdAndDelete(replyId).session(session);
+
+  // Remove reply from comment's replies array
+  await PostComments.findByIdAndUpdate(
+    reply.commentId,
+    { $pull: { replies: replyId } },
+    { session }
+  );
+
+  await session.commitTransaction();
   res.status(StatusCodes.OK).json({ message: "Reply deleted successfully" });
+  session.endSession();
 };
+export const likePostComment = async (req, res) => {
+  const { id: commentId } = req.params;
+  const userId = req.user.userId;
+
+  const comment = await PostComments.findById(commentId);
+  if (!comment) {
+    throw new BadRequestError("Comment not found");
+  }
+
+  const isLiked = comment.likes.includes(userId);
+  const update = isLiked 
+    ? { $pull: { likes: userId } }
+    : { $push: { likes: userId } };
+
+  const updatedComment = await PostComments.findByIdAndUpdate(
+    commentId,
+    update,
+    { new: true }
+  );
+
+  const message = isLiked ? "Comment unliked successfully" : "Comment liked successfully";
+
+  res.status(StatusCodes.OK).json({
+    message,
+    comment: updatedComment
+  });
+}
+export const likePostCommentReply = async (req, res) => {
+  const { id: replyId } = req.params;
+  const userId = req.user.userId;             
+  const reply = await PostReplies.findById(replyId);
+  if (!reply) {
+    throw new BadRequestError("Reply not found");
+  }   
+  const isLiked = reply.likes.includes(userId);
+  const update = isLiked 
+    ? { $pull: { likes: userId } }
+    : { $push: { likes: userId } }; 
+
+  const updatedReply = await PostReplies.findByIdAndUpdate(
+    replyId,
+    update,
+    { new: true }
+  );
+  const message = isLiked ? "Reply unliked successfully" : "Reply liked successfully";
+
+  res.status(StatusCodes.OK).json({
+    message,
+    reply: updatedReply
+  }); 
+} 
+
