@@ -29,6 +29,7 @@ const QaCommentSchema = new mongoose.Schema(
         ref: "QaComment",
       },
     ],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     deleted: {
       type: Boolean,
       default: false,

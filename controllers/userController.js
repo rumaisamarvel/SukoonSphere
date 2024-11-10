@@ -1,5 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
+import cloudinary from "cloudinary";
+import { formatImage } from "../middleware/multer.js";
 
 export const changeUserProfile = async (req, res) => {
   const user = await User.findById(req.user.userId);

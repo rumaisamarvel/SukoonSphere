@@ -36,6 +36,7 @@ const AnswerReplySchema = new mongoose.Schema(
     commentUserAvatar: {
       type: String,
     },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     deleted: {
       type: Boolean,
       default: false,
