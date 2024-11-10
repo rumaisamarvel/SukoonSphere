@@ -1,12 +1,12 @@
-import React, { createContext, useContext, useReducer, useState } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import customFetch from '@/utils/customFetch';
 
 const UserContext = createContext();
 
 const initialState = {
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
     isLoading: false,
-    error: null
+    error: null,
 };
 
 const userReducer = (state, action) => {
@@ -15,24 +15,24 @@ const userReducer = (state, action) => {
             return {
                 ...state,
                 user: action.payload,
-                isLoading: false
+                isLoading: false,
             };
         case 'REMOVE_USER':
             return {
                 ...state,
                 user: null,
-                isLoading: false
+                isLoading: false,
             };
         case 'SET_ERROR':
             return {
                 ...state,
                 error: action.payload,
-                isLoading: false
+                isLoading: false,
             };
         case 'SET_LOADING':
             return {
                 ...state,
-                isLoading: action.payload
+                isLoading: action.payload,
             };
         default:
             return state;
@@ -41,7 +41,15 @@ const userReducer = (state, action) => {
 
 export const UserProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // Persist user to localStorage whenever it changes
+    useEffect(() => {
+        if (state.user) {
+            localStorage.setItem('user', JSON.stringify(state.user));
+        } else {
+            localStorage.removeItem('user');
+        }
+    }, [state.user]);
 
     // User actions
     const login = async (userData) => {
@@ -49,7 +57,6 @@ export const UserProvider = ({ children }) => {
             dispatch({ type: 'SET_LOADING', payload: true });
             const { data } = await customFetch.post('/auth/login', userData);
             dispatch({ type: 'SET_USER', payload: data.user });
-            setIsLoggedIn(true);
             return { success: true };
         } catch (error) {
             dispatch({ type: 'SET_ERROR', payload: error.response?.data?.msg || 'Login failed' });
@@ -61,7 +68,7 @@ export const UserProvider = ({ children }) => {
         try {
             await customFetch.get('/auth/logout');
             dispatch({ type: 'REMOVE_USER' });
-            setIsLoggedIn(false);
+            localStorage.removeItem('user'); // Clear localStorage on logout
         } catch (error) {
             dispatch({ type: 'SET_ERROR', payload: error.message });
         }
@@ -84,7 +91,7 @@ export const UserProvider = ({ children }) => {
             ...state,
             login,
             logout,
-            updateUser
+            updateUser,
         }}>
             {children}
         </UserContext.Provider>
@@ -98,4 +105,4 @@ export const useUser = () => {
         throw new Error('useUser must be used within a UserProvider');
     }
     return context;
-}; 
+};

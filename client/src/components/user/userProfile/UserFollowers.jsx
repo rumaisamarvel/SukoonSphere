@@ -1,37 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import customFetch from '@/utils/customFetch';
 import { useUser } from '@/context/UserContext';
+import { useLoaderData } from 'react-router-dom';
+
+export const userFollowersLoader = async () => {
+    try {
+        const { data } = await customFetch.get('/user/followers');
+        return data.followers;
+    } catch (error) {
+        return error.response?.data?.msg || 'Error fetching followers';
+    }
+}
 
 const UserFollowers = () => {
-    const [followers, setFollowers] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const { user } = useUser();
+    const followers = useLoaderData();
 
-    useEffect(() => {
-        const fetchFollowers = async () => {
-            try {
-                setIsLoading(true);
-                const { data } = await customFetch.get('/user/followers');
-                console.log({ data })
-                setFollowers(data.followers);
-            } catch (error) {
-                setError(error.response?.data?.msg || 'Error fetching followers');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchFollowers();
-    }, []);
-
-    if (isLoading) {
-        return <div className="text-center p-4">Loading...</div>;
+    if (!followers) {
+        return <div className="text-center text-red-500 p-4">Error loading followers</div>;
     }
 
-    if (error) {
-        return <div className="text-center text-red-500 p-4">{error}</div>;
-    }
+    const handleFollowBack = async (followerId) => {
+        try {
+            await customFetch.post(`/user/follow/${followerId}`);
+            window.location.reload();
+        } catch (error) {
+            console.error('Error following user:', error);
+        }
+    };
 
     return (
         <div className="bg-white shadow rounded-lg p-4">

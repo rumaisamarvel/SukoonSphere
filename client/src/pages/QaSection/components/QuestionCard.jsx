@@ -4,6 +4,7 @@ import DeleteModal from '@/components/shared/DeleteModal';
 import customFetch from '@/utils/customFetch';
 import { useUser } from '@/context/UserContext';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { Like } from '@/components';
 
 const QuestionCard = ({ question, onLoadMore }) => {
     console.log({ question })
@@ -32,6 +33,13 @@ const QuestionCard = ({ question, onLoadMore }) => {
             setIsDeleting(false);
         }
     };
+    // const handleLikeQuestion = async () => {
+    //     try {
+    //         await customFetch.patch(`/qa-section/question/${question._id}/like`);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    // };
 
     return (
         <div
@@ -93,6 +101,7 @@ const QuestionCard = ({ question, onLoadMore }) => {
                     </span>
                 ))}
             </div>
+            {/* <Like totalLikes={question.totalLikes} id={question._id} likes={question.likes} onLike={handleLikeQuestion} /> */}
 
             {/* Display most liked answer first */}
             {question.mostLikedAnswer && <Answer answer={question.mostLikedAnswer} />}

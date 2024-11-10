@@ -2,6 +2,7 @@ import React from 'react';
 import { useUser } from '@/context/UserContext';
 const ProfileCard = () => {
     const { user, isLoading } = useUser();
+    console.log({ user });
     if (isLoading) {
         return (
             <div className="bg-white shadow rounded-lg p-4">

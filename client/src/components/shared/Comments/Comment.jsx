@@ -89,7 +89,8 @@ const Comment = ({
     const [showReplyForm, setShowReplyForm] = useState(false);
     const [replyContent, setReplyContent] = useState('');
     const [replies, setReplies] = useState([]);
-    const user = useUser();
+    const { user } = useUser();
+    const isAuthor = user?._id === comment.createdBy;
 
     // State for managing action and delete modals
     const [showActionModal, setShowActionModal] = useState(false);
@@ -168,7 +169,7 @@ const Comment = ({
                         </div>
 
                         {/* Action Menu for Comment Author */}
-                        {user?._id === comment.createdBy && (
+                        {isAuthor && (
                             <div className="relative">
                                 <BsThreeDotsVertical
                                     className="text-black cursor-pointer rotate-90"

@@ -63,3 +63,42 @@
     animation: scrollUp 5s ease-in-out infinite;
     /* Adjust timing as necessary */
 }
+
+
+@keyframes like-loader {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.like-loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ff4b4b;
+    border-radius: 50%;
+    animation: like-loader 0.8s ease-in-out infinite;
+}
+
+.like-loader::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: #ff4b4b;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}

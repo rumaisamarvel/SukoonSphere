@@ -71,14 +71,10 @@ export const UserFollowing = createOptimizedComponent(() => import("./user/userP
 export const AdminHeader = createOptimizedComponent(() => import("./dashboard/admin/AdminHeader"));
 export const AdminNavbar = createOptimizedComponent(() => import("./dashboard/admin/AdminNavbar"));
 
-// Posts Components
-
-export const LikePost = createOptimizedComponent(() => import("./posts/LikePost"));
-
 // Shared Components
 
-import Spinner from './shared/Spinner';
+export const Like = createOptimizedComponent(() => import("./shared/Like"));
+export const Follow = createOptimizedComponent(() => import("./shared/Follow"));
 
-export {
-    Spinner,
-};
+export const Spinner = createOptimizedComponent(() => import("./shared/Spinner"));
+
