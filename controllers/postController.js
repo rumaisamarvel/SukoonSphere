@@ -99,10 +99,7 @@ export const getAllCommentsByPostId = async (req, res) => {
     totalReplies: (comment.replies || []).length,
   }));
 
-  res.status(StatusCodes.OK).json({
-    comments: commentsWithReplies,
-    totalComments: commentsWithReplies.length,
-  });
+  res.status(StatusCodes.OK).json({ comments: commentsWithReplies });
 };
 export const getAllPostsByUserId = async (req, res) => {
   const { userId } = req.user;
@@ -119,7 +116,6 @@ export const getAllPostsByUserId = async (req, res) => {
 
   res.status(StatusCodes.OK).json({
     posts: postsWithCounts,
-    totalPosts: postsWithCounts.length,
   });
 };
 export const createReply = async (req, res) => {
