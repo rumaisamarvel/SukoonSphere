@@ -16,6 +16,9 @@ import {
   getAnswersByQuestionId,
   getUserAnswers,
   getUserQuestions,
+  likeAnswer,
+  likeAnswerComment,
+  likeAnswerReply,
 } from "../controllers/qaController.js";
 import {
   validateAnswerInput,
@@ -94,5 +97,23 @@ router.delete(
   validateIdParam,
   deleteAnswerReply
 );
-
+// like routes
+router.patch(
+  "/question/answer/:id/like",
+  authenticateUser,
+  validateIdParam,
+  likeAnswer
+);
+router.patch(
+  "/question/answer/comments/:id/like",
+  authenticateUser,
+  validateIdParam,
+  likeAnswerComment
+);
+router.patch(
+  "/question/answer/comments/reply/:id/like",
+  authenticateUser,
+  validateIdParam,
+  likeAnswerReply
+);
 export default router;

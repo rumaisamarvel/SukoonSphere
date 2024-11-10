@@ -2,17 +2,18 @@ import Question from "../models/qaSection/questionModel.js"; // Adjust the impor
 import Answer from "../models/qaSection/answerModel.js";
 import Comment from "../models/qaSection/answerCommentModel.js";
 import Replies from "../models/qaSection/answerReplyModel.js";
-
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError } from "../errors/customErors.js";
 import mongoose from "mongoose";
+import User from "../models/userModel.js";
 // question controllers
 export const addQuestion = async (req, res) => {
   const { questionText, context, tags } = req.body;
+  const { userId, username, avatar } = req.user;
 
   const similarQuestions = await Question.find({
-    $text: { $search: questionText }, // Using text search for efficiency
-  }).select("-answers"); // Exclude answers to reduce payload size
+    $text: { $search: questionText },
+  }).select("-answers");
 
   if (similarQuestions.length > 0) {
     return res.status(StatusCodes.BAD_REQUEST).json({
@@ -21,105 +22,108 @@ export const addQuestion = async (req, res) => {
     });
   }
 
-  const newQuestion = await Question.create({
-    questionText,
-    context,
-    author: {
-      userId: req.user.userId,
-      username: req.user.username,
-      avatar: req.user.avatar,
-    },
-    tags,
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  const newQuestion = await Question.create(
+    [
+      {
+        questionText,
+        context,
+        author: {
+          userId,
+          username,
+          avatar,
+        },
+        tags,
+      },
+    ],
+    { session }
+  );
+
+  await User.findByIdAndUpdate(
+    userId,
+    { $push: { questions: newQuestion[0]._id } },
+    { session }
+  );
+
+  await session.commitTransaction();
+  session.endSession();
+
+  res.status(StatusCodes.CREATED).json({
+    msg: "Question added successfully",
+    question: newQuestion[0],
   });
-  res
-    .status(StatusCodes.CREATED)
-    .json({ msg: "Question added successfully", question: newQuestion });
 };
 export const getAllQuestions = async (req, res) => {
-  const questions = await Question.find({});
-  res.status(StatusCodes.OK).json({ questions });
+  const questions = await Question.find({}).lean();
+
+  const questionsWithCounts = questions.map((question) => ({
+    ...question,
+    totalAnswers: (question.answers || []).length,
+  }));
+
+  res.status(StatusCodes.OK).json({ questions: questionsWithCounts });
 };
 export const getUserQuestions = async (req, res) => {
   const { userId } = req.user;
-  const questions = await Question.find({ "author.userId": userId });
-  res.status(StatusCodes.OK).json({ questions });
+  const questions = await Question.find({ "author.userId": userId }).lean();
+
+  const questionsWithCounts = questions.map((question) => ({
+    ...question,
+    totalAnswers: (question.answers || []).length,
+  }));
+
+  res.status(StatusCodes.OK).json({ questions: questionsWithCounts });
 };
 
 export const getAllQuestionsWithAnswer = async (req, res) => {
-  const questions = await Question.aggregate([
-    {
-      $lookup: {
-        from: "answers",
-        localField: "_id",
-        foreignField: "answeredTo",
-        as: "answers",
-      },
-    },
-    {
-      $match: {
-        "answers.0": { $exists: true }, // Only include questions with at least one answer
-      },
-    },
-    {
-      $addFields: {
-        mostLikedAnswer: {
-          $arrayElemAt: [
-            {
-              $sortArray: {
-                input: "$answers",
-                sortBy: { likes: -1 }, // Sort by number of likes in descending order
-              },
-            },
-            0, // Get the first (most liked) answer
-          ],
-        },
-      },
-    },
-    {
-      $project: {
-        questionText: 1,
-        context: 1,
-        author: 1,
-        tags: 1,
-        mostLikedAnswer: 1,
-      },
-    },
-  ]);
+  const questions = await Question.find({
+    answers: { $exists: true, $not: { $size: 0 } },
+  }).lean();
 
-  if (!questions.length) {
+  const questionsWithAnswerDetails = questions.map((question) => ({
+    ...question,
+    totalAnswers: question.answers.length,
+    mostLikedAnswer: question.answers.reduce((prev, curr) =>
+      prev.likes?.length > curr.likes?.length ? prev : curr
+    ),
+  }));
+
+  if (!questionsWithAnswerDetails.length) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ msg: "No questions found with answers." });
   }
 
-  res.status(StatusCodes.OK).json({ questions });
+  res.status(StatusCodes.OK).json({ questions: questionsWithAnswerDetails });
 };
 
 // answer controllers
 export const createAnswer = async (req, res) => {
-  const { userId, username, avatar } = req.user; // Assuming req.user contains the authenticated user's data
-  const { id: questionId } = req.params; // Assuming questionId is passed as a URL param
+  const { userId, username, avatar } = req.user;
+  const { id: questionId } = req.params;
 
-  // Check if the question exists
   const question = await Question.findById(questionId);
   if (!question) {
     throw new BadRequestError("Question not found");
   }
 
-  // Create the new answer and associate it with the question
   const newAnswer = await Answer.create({
-    context: req.body.context, // Assuming the answer text is passed in the body
+    context: req.body.context,
     author: {
       userId,
       username,
       avatar,
     },
-    answeredTo: questionId, // Link the answer to the question
+    answeredTo: questionId,
   });
 
-  // Optionally, add the answer to the question's 'answers' array (bi-directional relationship)
+  // Add the answer to the question's 'answers' array and update user's answers array
   question.answers.push(newAnswer._id);
   await question.save();
+
+  await User.findByIdAndUpdate(userId, { $push: { answers: newAnswer._id } });
 
   // Send success response
   res.status(StatusCodes.CREATED).json({
@@ -130,8 +134,16 @@ export const createAnswer = async (req, res) => {
 export const getAnswersByQuestionId = async (req, res) => {
   const { id: questionId } = req.params;
 
-  // Find all answers for the given questionId
-  const answers = await Answer.find({ answeredTo: questionId });
+  // Find all answers for the given questionId and populate comments count
+  const answers = await Answer.aggregate([
+    { $match: { answeredTo: new mongoose.Types.ObjectId(questionId) } },
+    {
+      $addFields: {
+        totalComments: { $size: "$comments" },
+        totalLikes: { $size: "$likes" },
+      },
+    },
+  ]);
 
   // Check if no answers are found
   if (answers.length === 0) {
@@ -143,7 +155,15 @@ export const getAnswersByQuestionId = async (req, res) => {
 };
 export const getUserAnswers = async (req, res) => {
   const { userId } = req.user;
-  const answers = await Answer.find({ "author.userId": userId });
+  const answers = await Answer.aggregate([
+    { $match: { "author.userId": new mongoose.Types.ObjectId(userId) } },
+    {
+      $addFields: {
+        totalComments: { $size: "$comments" },
+        totalLikes: { $size: "$likes" },
+      },
+    },
+  ]);
   res.status(StatusCodes.OK).json({ answers });
 };
 // answer comment controllers
@@ -168,7 +188,15 @@ export const createAnswerComment = async (req, res) => {
 };
 export const getAllCommentsByAnswerId = async (req, res) => {
   const { id: postId } = req.params;
-  const postComments = await Comment.find({ postId });
+  const postComments = await Comment.aggregate([
+    { $match: { postId: new mongoose.Types.ObjectId(postId) } },
+    {
+      $addFields: {
+        repliesLength: { $size: "$replies" },
+        totalLikes: { $size: "$likes" },
+      },
+    },
+  ]);
   res.status(StatusCodes.OK).json({ comments: postComments });
 };
 // answerReply controllers
@@ -203,14 +231,19 @@ export const createAnswerReply = async (req, res) => {
 };
 export const getAllAnswerRepliesBYCommentId = async (req, res) => {
   const { id: commentId } = req.params;
-  const replies = await Replies.find({ commentId });
+  const replies = await Replies.find({ commentId }).lean();
   if (replies.length === 0) {
     return res
       .status(StatusCodes.OK)
       .json({ message: "No replies found for this comment", replies: [] });
   }
 
-  res.status(StatusCodes.OK).json({ replies });
+  const repliesWithCounts = replies.map(reply => ({
+    ...reply,
+    totalLikes: (reply.likes || []).length
+  }));
+
+  res.status(StatusCodes.OK).json({ replies: repliesWithCounts });
 };
 // delete controllers
 export const deleteQuestion = async (req, res) => {
@@ -255,6 +288,13 @@ export const deleteQuestion = async (req, res) => {
     await Answer.deleteMany({ answeredTo: postId }).session(session);
   }
 
+  // Remove question from user's questions array
+  const user = await User.findById(question.author.userId).session(session);
+  if (user) {
+    user.questions.pull(postId);
+    await user.save({ session });
+  }
+
   await Question.deleteOne({ _id: postId }).session(session);
 
   await session.commitTransaction();
@@ -295,6 +335,13 @@ export const deleteAnswer = async (req, res) => {
   if (question) {
     question.answers.pull(answerId);
     await question.save({ session });
+  }
+
+  // Remove answer from user's answers array
+  const user = await User.findById(answer.author.userId).session(session);
+  if (user) {
+    user.answers.pull(answerId);
+    await user.save({ session });
   }
 
   await Answer.deleteOne({ _id: answerId }).session(session);
@@ -348,9 +395,7 @@ export const deleteAnswerReply = async (req, res) => {
   }
 
   if (reply.createdBy.toString() !== req.user.userId) {
-    throw new UnauthorizedError(
-      "You are not authorized to delete this reply"
-    );
+    throw new UnauthorizedError("You are not authorized to delete this reply");
   }
 
   const session = await mongoose.startSession();
@@ -369,4 +414,63 @@ export const deleteAnswerReply = async (req, res) => {
   await session.commitTransaction();
   res.status(StatusCodes.OK).json({ message: "Reply deleted successfully" });
   session.endSession();
+};
+
+// like controllers
+export const likeAnswer = async (req, res) => {
+  const { id: answerId } = req.params;
+  const { userId } = req.user;
+
+  const answer = await Answer.findByIdAndUpdate(
+    answerId,
+    {
+      [answer?.likes.includes(userId) ? '$pull' : '$push']: { likes: userId }
+    },
+    { new: true }
+  );
+
+  if (!answer) {
+    throw new BadRequestError("Answer not found");
+  }
+
+  res.status(StatusCodes.OK).json({
+    message: "success",
+  });
+};
+export const likeAnswerComment = async (req, res) => {
+  const { id: commentId } = req.params;
+  const { userId } = req.user;
+
+  const comment = await Comment.findByIdAndUpdate(
+    commentId,
+    {
+      [comment?.likes?.includes(userId) ? '$pull' : '$push']: { likes: userId }
+    },
+    { new: true }
+  );
+
+  if (!comment) {
+    throw new BadRequestError("Comment not found");
+  }
+
+  res.status(StatusCodes.OK).json({
+    message: "success",
+  });
+};
+export const likeAnswerReply = async (req, res) => {
+  const { id: replyId } = req.params;
+  const { userId } = req.user;
+  const reply = await Replies.findByIdAndUpdate(
+    replyId,
+    {
+      [reply?.likes?.includes(userId) ? '$pull' : '$push']: { likes: userId }
+    },
+    { new: true }
+  );  
+  if (!reply) {
+    throw new BadRequestError("Reply not found");
+  }
+  res.status(StatusCodes.OK).json({
+    message: "success",
+  });
 };

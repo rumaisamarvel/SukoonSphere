@@ -97,6 +97,7 @@ export const getAllCommentsByPostId = async (req, res) => {
   const commentsWithReplies = postComments.map((comment) => ({
     ...comment,
     totalReplies: (comment.replies || []).length,
+    totalLikes: (comment.likes || []).length,
   }));
 
   res.status(StatusCodes.OK).json({ comments: commentsWithReplies });
@@ -165,9 +166,13 @@ export const getAllRepliesByCommentId = async (req, res) => {
     .sort({ createdAt: -1 })
     .lean();
 
+  const repliesWithCounts = replies.map(reply => ({
+    ...reply,
+    totalLikes: (reply.likes || []).length
+  }));
+
   res.status(StatusCodes.OK).json({
-    replies,
-    totalReplies: replies.length,
+    replies: repliesWithCounts
   });
 };
 
