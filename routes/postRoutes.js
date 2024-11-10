@@ -18,6 +18,8 @@ import {
   getAllPosts,
   getAllPostsByUserId,
   getAllRepliesBYCommentId,
+  likePostComment,
+  likePostCommentReply,
   likePosts,
 } from "../controllers/postController.js";
 
@@ -30,6 +32,8 @@ router.post(
 );
 router.get("/", getAllPosts);
 router.patch("/:id/like", authenticateUser, validateIdParam, likePosts);
+router.patch("/comments/:id/like", authenticateUser, validateIdParam, likePostComment);
+router.patch("/comments/replies/:id/like", authenticateUser, validateIdParam, likePostCommentReply);
 router.post(
   "/:id/comments",
   authenticateUser,
