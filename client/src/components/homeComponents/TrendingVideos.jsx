@@ -8,7 +8,7 @@ const TrendingVideos = () => {
         <>
             <div className='max-w-7xl mx-auto' >
                 <SectionTitle title={'recent videos'} />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-6 " data-aos="fade">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-6 " data-aos="fade">
                     <VideoCard videos={videos.slice(0, 4)} />
                 </div>
             </div>

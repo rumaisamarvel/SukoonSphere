@@ -23,7 +23,7 @@ const ProfileCard = () => {
                     <img
                         src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || 'Anonymous')}&background=random`}
                         alt="Profile"
-                        className="rounded-full w-20 h-20 border-2 border-gray-200 object-cover"
+                        className="rounded-full md:w-20 md:h-20 w-8 h-8 border-2 border-gray-200 object-cover"
                     />
                     <h1 className="text-lg font-bold mt-2 text-[var(--black-color)]">
                         {user?.name || 'Anonymous'}

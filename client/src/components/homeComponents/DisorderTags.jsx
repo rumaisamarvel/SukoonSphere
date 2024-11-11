@@ -55,7 +55,7 @@ const DisorderTags = () => {
         <>
             <SectionTitle title={"Mental Health disorders"}></SectionTitle>
             <div className=" md:px-0 md:max-w-7xl md:mx-auto  relative  overflow-x-hidden" data-aos="fade-up" >
-                <h1 className="p-6 md:p-0 w-full text-wrap text-[var(--grey--900)] sm:mb-6 md:text-center text-[1.6rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem]" data-aos="fade-up" >
+                <h1 className="px-4 md:p-0 w-full text-wrap text-[var(--grey--900)] sm:mb-6 md:text-center text-[1.6rem] md:text-[2.5rem] sm:text-[3.5rem] sm:leading-[3.5rem]" data-aos="fade-up" >
                     Monitor for early indicators of  <span className="text-[var(--primary)] italic sm:block">hundrunds of disorders</span>
                 </h1>
                 <div className=" carousel-wrapper sm:mt-8">

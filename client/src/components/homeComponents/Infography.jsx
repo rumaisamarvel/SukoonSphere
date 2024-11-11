@@ -59,10 +59,10 @@ function Infography() {
   };
 
   return (
-    <div className="relative my-12 mb-20">
+    <div className="relative lg:my-12 lg:mb-20">
       <SectionTitle title={"Why SukoonSphere?"}></SectionTitle>
 
-      <div className="max-w-7xl mx-auto text-white relative px-6 ">
+      <div className="max-w-7xl mx-auto text-white relative px-4 ">
         <div className="max-w-7xl mx-auto relative text-center">
           <div className="bg-[var(--primary)] text-[--gray-700] text-[12px] sm:text-sm inline-flex items-center py-2 px-2 rounded-full mb-4 glossy-effect-bar">
             <span className="bg-[#01427a] text-white rounded-full w-4 h-4 flex items-center justify-center mr-2">

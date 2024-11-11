@@ -8,7 +8,7 @@ function Podcasts() {
   return (
 <>
       <SectionTitle title="Recent Podcasts" />
-    <div className='max-w-7xl mx-auto sm:my-10 sm:mt-20 px-6 ' data-aos="fade-up">
+    <div className='max-w-7xl mx-auto sm:my-10 sm:mt-20 px-4 md:px-6 ' data-aos="fade-up">
       <div className="space-y-4 ">
         <h2 className="text-3xl mt-0 text-[var(--black-color)]">Our Latest Podcast</h2>
         <div className=" grid grid-cols-1 lg:grid-cols-12 gap-4">

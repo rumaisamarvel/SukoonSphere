@@ -5,8 +5,8 @@ import { Form, Link, useLoaderData } from "react-router-dom";
 function SearchFilters() {
     const { category } = useLoaderData()
     return (
-        <Form className='grid grid-cols-12 gap-4  justify-center items-end'>
-            <label className=" col-span-3 input bg-transparent flex items-center gap-2 " style={{ borderBottom: '2px solid #13404f', borderRadius: '0px' }}>
+        <Form className='flex flex-col md:grid md:grid-cols-12 gap-4 justify-center items-end'>
+            <label className="w-full md:col-span-3 input bg-transparent flex items-center gap-2" style={{ borderBottom: '2px solid #13404f', borderRadius: '0px' }}>
                 <input
                     type="text"
                     className="grow text-[var(--black-color)]"
@@ -26,10 +26,10 @@ function SearchFilters() {
                     />
                 </svg>
             </label>
-            <label className='col-span-2'>
+            <label className='w-full md:col-span-2'>
                 <select
                     name="category"
-                    className="select bg-transparent cursor-pointer "
+                    className="w-full select bg-transparent cursor-pointer"
                     style={{ borderBottom: '2px solid #13404f', borderRadius: '0px' }}
                 >
                     <option disabled selected>
@@ -40,16 +40,16 @@ function SearchFilters() {
                     })}
                 </select>
             </label>
-            <div className='flex gap-2'>
+            <div className='flex gap-2 w-full md:w-auto justify-start md:justify-start'>
                 <button
                     type="submit"
-                    className=" btn btn-outline btn-[red] btn-sm"
+                    className="btn btn-outline btn-[red] btn-sm"
                 >
                     <FaSearch className="text-[var(--primary)] text-6 hover:text-[var(--ternery)] size-5" />
 
                 </button>
-                <Link to="/media/all-videos" className=' btn btn-outline btn-[red] btn-sm' >
-                    <RxReset className=" font-extrabold text-[var(--primary)] text-6 hover:text-[var(--ternery)] size-6" />
+                <Link to="/media/all-videos" className='btn btn-outline btn-[red] btn-sm' >
+                    <RxReset className="font-extrabold text-[var(--primary)] text-6 hover:text-[var(--ternery)] size-6" />
                 </Link>
             </div>
         </Form>

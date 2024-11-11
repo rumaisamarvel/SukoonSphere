@@ -10,7 +10,7 @@ const SpotlightArticle = articles.reduce((max, article) => {
   return article.views > max.views ? article : max;
 }, articles[0])
   return (
-    <div className="max-w-7xl mx-auto my-12 mt-20">
+    <div className="max-w-7xl mx-auto lg:my-12 lg:mt-20">
       <SectionTitle title="Recent Artcles" />
       <div className="space-y-4 ">
         <div className="flex justify-center lg:justify-end mr-4">
@@ -18,7 +18,7 @@ const SpotlightArticle = articles.reduce((max, article) => {
             Spotlight
           </h2>
         </div>
-        <div className="flex flex-col-reverse lg:flex-row gap-4 px-6 ">
+        <div className="flex flex-col-reverse lg:flex-row gap-4 px-4 md:px-6 ">
           <div className=" flex flex-col gap-2 items-center">
             <h2 className="text-3xl text-[var(--black-color)] mb-4">Recents</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 " data-aos="fade-up">
