@@ -113,7 +113,6 @@ const QaSection = () => {
             {questions?.length > 0 ? (
               questions.map((question) => (
                 <QuestionCard
-                  key={question._id}
                   question={question}
                   onLoadMore={getAnswerByQuestionId}
                 />

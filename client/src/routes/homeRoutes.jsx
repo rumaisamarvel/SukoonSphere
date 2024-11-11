@@ -9,9 +9,10 @@ const Article = lazy(() => import('../pages/articles/Article'));
 // Keep the loader as is
 import { ArticlesLoader } from '../pages/articles/Articles';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
-import { postsAction, postsLoader } from '@/pages/posts/Posts';
 import { questionsAction, questionsLoader } from '@/pages/QaSection/QaSection';
 import { answerAction, answersLoader } from '@/pages/answer/Answer';
+import AllPosts, { allPostsAction, allPostsLoader } from '@/pages/posts/AllPosts';
+import SinglePost, { singlePostLoader } from '@/pages/posts/SinglePost';
 
 export const homeRoutes = [
     {
@@ -60,13 +61,34 @@ export const homeRoutes = [
         ),
     },
     {
-        path: '/Posts',
+        path: '/posts',
         element: (
             <Suspense fallback={<LoadingSpinner />}>
                 <Posts />
             </Suspense>
         ),
-        action: postsAction,
-        loader: postsLoader,
+        children: [
+            {
+                index: true,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <AllPosts />
+                    </Suspense>
+                ),
+                loader: allPostsLoader,
+                action: allPostsAction
+            },
+            {
+                path: '/posts/:id',
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <SinglePost />
+                    </Suspense>
+                ),
+                loader: singlePostLoader
+            },
+        ],
+
     },
+
 ];

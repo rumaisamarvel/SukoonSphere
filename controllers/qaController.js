@@ -421,20 +421,33 @@ export const likeAnswer = async (req, res) => {
   const { id: answerId } = req.params;
   const { userId } = req.user;
 
-  const answer = await Answer.findByIdAndUpdate(
+  // First find the answer to check if it exists 
+  const existingAnswer = await Answer.findById(answerId);
+  console.log({ existingAnswer });
+  if (!existingAnswer) {
+    throw new BadRequestError("Answer not found");
+  }
+
+  // Check if user has already liked
+  const hasLiked = existingAnswer.likes.includes(userId);
+
+  // Update likes array based on whether user has already liked
+  const updatedAnswer = await Answer.findByIdAndUpdate(
     answerId,
     {
-      [answer?.likes.includes(userId) ? '$pull' : '$push']: { likes: userId }
+      [hasLiked ? '$pull' : '$push']: { likes: userId }
     },
     { new: true }
   );
 
-  if (!answer) {
-    throw new BadRequestError("Answer not found");
-  }
+  // Update total likes count
+  updatedAnswer.totalLikes = updatedAnswer.likes.length;
+  await updatedAnswer.save();
 
   res.status(StatusCodes.OK).json({
     message: "success",
+    likes: updatedAnswer.likes,
+    totalLikes: updatedAnswer.totalLikes
   });
 };
 export const likeAnswerComment = async (req, res) => {
@@ -466,7 +479,7 @@ export const likeAnswerReply = async (req, res) => {
       [reply?.likes?.includes(userId) ? '$pull' : '$push']: { likes: userId }
     },
     { new: true }
-  );  
+  );
   if (!reply) {
     throw new BadRequestError("Reply not found");
   }

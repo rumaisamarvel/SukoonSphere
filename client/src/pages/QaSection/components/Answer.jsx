@@ -143,6 +143,14 @@ const Answer = ({ answer, onError }) => {
         });
     }, [fetchComments]);
 
+    const handleLikeAnswer = useCallback(async () => {
+        try {
+            await customFetch.patch(`/qa-section/question/answer/${answer._id}/like`);
+        } catch (error) {
+            handleCommentError(error?.response?.data?.msg || 'Failed to like answer');
+        }
+    }, [handleCommentError, answer._id]);
+
     return (
         <div className="pl-4 border-l-2 border-gray-300">
             <div className="flex items-center mb-2 justify-between">
@@ -188,8 +196,10 @@ const Answer = ({ answer, onError }) => {
 
             <div className="flex items-center gap-4 mt-2">
                 <Like
-                    totalLikes={answer.likes?.length || 0}
-                    id={answer._id}
+                    onLike={handleLikeAnswer}
+                    totalLikes={answer?.totalLikes}
+                    likes={answer?.likes}
+                    id={answer?._id}
                     onError={handleCommentError}
                 />
                 <button

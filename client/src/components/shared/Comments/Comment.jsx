@@ -78,7 +78,7 @@ const Comment = ({
     comment,
     onEdit,
     onDelete,
-    onLike,
+    onLikeComment,
     onReply,
     onDeleteReply,
     currentUser,
@@ -132,6 +132,9 @@ const Comment = ({
             throw error;
         }
     }
+    const handleLikeComment = async () => {
+        await onLikeComment();
+    }
 
     // Fetch replies for a comment
     const fetchReplies = async () => {
@@ -154,7 +157,7 @@ const Comment = ({
     }, [comment._id]);
 
     return (
-        <div className="ml-4 mt-4">
+        <div className="ml-4 mt-4 border-l-2 border-gray-200 pb-4">
             <div className="flex items-start gap-3">
                 <UserAvatar user={comment.user} size="medium" />
                 <div className="flex-1">
@@ -198,10 +201,7 @@ const Comment = ({
                             <div className="mt-2 flex items-center gap-4">
                                 <ReactionButtons
                                     likes={0}
-                                    dislikes={0}
-                                    userReaction={null}
-                                    onLike={() => { }}
-                                    onDislike={() => { }}
+                                    onLike={() => handleLikeComment}
                                     onReply={() => setShowReplyForm(!showReplyForm)}
                                 />
                             </div>
@@ -251,7 +251,6 @@ const Comment = ({
                                                 reply={reply}
                                                 onEdit={onEdit}
                                                 onDeleteReply={handleDeleteReply}
-                                                onLike={onLike}
                                                 currentUser={currentUser}
                                                 type={type}
                                                 commentId={comment._id}

@@ -1,26 +1,36 @@
 import React, { useState } from "react";
 import { TAGS } from "../../../../utils/constants"
-import { Form } from "react-router-dom";
+import { Form, useActionData, useNavigation } from "react-router-dom";
 
 const PostModal = ({ onClose }) => {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const data = useActionData();
+  console.log({ data });
+
+
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-50">
       <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all">
         <div className="px-6 sm:px-8 py-6">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 border-b pb-4">Share Your Story</h2>
 
-          <Form method="post" encType="multipart/form-data" className="space-y-4">
-            {/* Description Field */}
+        <Form method="post" encType="multipart/form-data" className="">
+          <div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                What's on your mind?
-              </label>
-              <textarea
-                name="description"
-                className="bg-[var(--white-color)] w-full px-4 py-3 rounded-[10px] border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none h-[80px]"
-                placeholder="Share your thoughts, experiences or questions..."
-              />
+              {data?.error && <p className="text-red-500">{data.error.split(",")[0]}</p>}
             </div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              What's on your mind?
+            </label>
+            <textarea
+              name="description"
+              className="bg-[var(--white-color)] w-full px-4 py-3 rounded-[10px] border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none min-h-[80px] "
+              placeholder="Share your thoughts, experiences or questions..."
+            />
+          </div>
+
 
             {/* Image Upload */}
             <div>
@@ -70,24 +80,24 @@ const PostModal = ({ onClose }) => {
               </p>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end space-x-4 pt-4 border-t mt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-2 rounded-[10px] border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn-2"
-              >
-                Share Post
-              </button>
-            </div>
-          </Form>
-        </div>
+          <div className="flex justify-end space-x-4 pt-3 border-t">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 rounded-[10px] border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn-2"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Sharing..." : "Share Post"}
+            </button>
+          </div>
+        </Form>
+
       </div>
     </div>
   );
