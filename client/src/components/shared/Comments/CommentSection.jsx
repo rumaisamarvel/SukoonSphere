@@ -127,28 +127,30 @@ const CommentSection = ({
             </div>
 
             {/* Loading indicator shown when submitting first comment */}
-            {isSubmitting && comments.length === 0 && (
+            {isSubmitting && comments.length === 0 ? (
                 <div className="text-center text-gray-500 my-4">
                     Loading comments...
                 </div>
+            ) : (
+                /* List of existing comments */
+                <div className="mt-6 space-y-4">
+                    {comments?.map((comment) => (
+                        <Comment
+                            key={comment._id}
+                            comment={comment}
+                            onEdit={handleEditComment}
+                            onDelete={handleDeleteComment}
+                            onLike={handleLikeComment}
+                            onReply={onReplyToComment}
+                            onDeleteReply={onDeleteReply}
+                            currentUser={currentUser}
+                            type={type}
+                        />
+                    ))}
+                </div>
             )}
 
-            {/* List of existing comments */}
-            <div className="mt-6 space-y-4">
-                {comments?.map((comment) => (
-                    <Comment
-                        key={comment._id}
-                        comment={comment}
-                        onEdit={handleEditComment}
-                        onDelete={handleDeleteComment}
-                        onLike={handleLikeComment}
-                        onReply={onReplyToComment}
-                        onDeleteReply={onDeleteReply}
-                        currentUser={currentUser}
-                        type={type}
-                    />
-                ))}
-            </div>
+
         </div>
     );
 };
