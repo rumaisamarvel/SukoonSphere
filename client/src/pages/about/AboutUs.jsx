@@ -20,7 +20,7 @@ function AboutUs() {
             <div className="bg-[--body] md:px-4  flex flex-col items-center text-center " data-aos="fade" data-aos-duration="1500">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center py-4 space-y-8 md:space-y-0">
                     {/* Left Window Image */}
-                    <div className="w-full md:w-1/3">
+                    <div className="hidden md:block w-full md:w-1/3">
                         <img
                             src="https://cdn.prod.website-files.com/626fcecbc824dd1c670451ba/62a805699c927d7302e20348_abt-window-leaves-right.png"
                             alt="Window Image loading..."
@@ -41,8 +41,8 @@ function AboutUs() {
                         </button>
                     </div>
                 </div>
-                <div className='max-w-4xl flex flex-col md:flex-row items-center md:space-y-0 my-24 gap-6'>
-                    <div className="w-full md:w-1/2 space-y-2" data-aos="fade-up" >
+                <div className='max-w-4xl flex flex-col md:flex-row items-center md:space-y-0 md:my-24 gap-6 px-4 '>
+                    <div className="w-full md:w-1/2 space-y-2 " data-aos="fade-up" >
                         <h1 className='text-[var(--grey--900)] text-[1.6rem] sm:text-[2.5rem] md:text-[3.5rem] md:leading-[3.5rem]'>What we do? </h1>
                         <hr />
                         <p className='text-[var(--grey--800)] text-justify lg:text-center'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia nisi laudantium magni dolorum perferendis. Nobis dolor tenetur aliquam illo maxime?</p>

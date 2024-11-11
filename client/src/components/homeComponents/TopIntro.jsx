@@ -9,7 +9,7 @@ import "../../index.css";
 const TopIntro = () => {
   return (
     <div
-      className="flex items-center justify-center p-6 max-w-7xl mx-auto overflow-x-hidden pt-4"
+      className="flex items-center justify-center p-4  max-w-7xl mx-auto overflow-x-hidden pt-4"
       data-aos="fade"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">

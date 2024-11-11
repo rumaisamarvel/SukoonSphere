@@ -32,7 +32,7 @@ const UserProfile = () => {
     return (
         <>
             {/* <HeaderImg currentPage="Profile" bgImg={bgImg} /> */}
-            <div className='relative grid  sm:grid-cols-12 grid-cols-12 max-w-7xl mx-auto'>
+            <div className='relative grid  sm:grid-cols-12 grid-cols-12 max-w-7xl mx-auto p-4 '>
                 <div className="sticky top-[12%] h-screen col-span-3 ">
                     <ProfileCard />
                 </div>
