@@ -34,7 +34,7 @@ const PostCard = ({ post, onPostDelete }) => {
     const fetchComments = useCallback(async () => {
         try {
             const { data } = await customFetch.get(`/posts/${post._id}/comments`);
-            setComments(data || []);
+            setComments(data?.comments || []);
         } catch (error) {
             handleCommentError(error?.response?.data?.msg || 'Failed to fetch comments');
             throw error;
@@ -232,7 +232,7 @@ const PostCard = ({ post, onPostDelete }) => {
                         >
                             <AiOutlineComment className='w-5 h-5' />
                             <span className='text-sm font-medium text-[var(--grey--900)] hover:text-blue-500'>
-                                {comments.length || 0} comments
+                                {post?.totalComments || 0} comments
                             </span>
                         </button>
                     </div>
