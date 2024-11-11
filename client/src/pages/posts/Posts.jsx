@@ -1,41 +1,10 @@
 import React, { useState } from 'react';
 import { GroupsSidebar, ProfileSidebar } from '@/components';
-import { PostModal } from '@/components';
-import { useAuth0 } from '@auth0/auth0-react';
-import customFetch from '@/utils/customFetch';
-import { useLoaderData } from 'react-router-dom';
-import PostCard from '@/components/posts/PostCard';
-
-export const postsAction = async ({ request }) => {
-  const result = await request.formData();
-  try {
-    const response = await customFetch.post("/posts", result);
-    console.log({ response });
-    window.location.href = '/posts';
-    return { success: response.data.msg };
-  } catch (error) {
-    console.log({ error });
-    return { error: error?.response?.data?.msg || "An error occurred during signup." };
-  }
-  return null;
-};
-
-export const postsLoader = async () => {
-  try {
-    const { data } = await customFetch.get("/posts");
-    console.log({ data });
-    return { posts: data };
-  } catch (error) {
-    console.log(error);
-    return { error: error?.response?.data?.msg || "Could not fetch posts." };
-  }
-  return null;
-};
+import { Outlet } from 'react-router-dom';
+import { useUser } from '@/context/UserContext';
 
 const Posts = () => {
-  const { user } = useAuth0();
-  const { posts: _posts } = useLoaderData();
-  const [posts, setPosts] = useState(_posts.posts);
+  const { user } = useUser();
   const [showModal, setShowModal] = useState(false);
 
   const groups = [
@@ -81,34 +50,7 @@ const Posts = () => {
         {/* Main Content */}
         <div className="col-span-12 lg:col-span-6 space-y-4">
           {/* Add Post Card */}
-          <div className=" mb-6 p-4 sm:p-6 bg-blue-50 rounded-[10px] shadow-sm text-center">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4">Share Your Thoughts!</h2>
-            <p className="text-gray-700 mb-4 text-sm sm:text-base">
-              Got something on your mind? Share your experiences, tips, and thoughts with the community.
-            </p>
-            <button
-              onClick={() => setShowModal(true)}
-              className="action-button w-full sm:w-auto"
-            >
-              Add Post
-            </button>
-          </div>
-
-          {/* Posts List */}
-          {posts?.length > 0 ? (
-            posts.map((post) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                onPostDelete={handlePostDelete}
-              />
-            ))
-          ) : (
-            <div className="text-center p-8 bg-white rounded-[10px] shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Posts Yet</h3>
-              <p className="text-gray-600">Be the first one to share your thoughts with the community!</p>
-            </div>
-          )}
+          <Outlet />
         </div>
 
         {/* Right Sidebar - Profile */}
@@ -127,8 +69,6 @@ const Posts = () => {
         </div>
       </div>
 
-      {/* Modal */}
-      {showModal && <PostModal onClose={() => setShowModal(false)} />}
     </div>
   );
 };

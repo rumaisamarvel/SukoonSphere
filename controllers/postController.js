@@ -37,6 +37,9 @@ export const createPost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
   const posts = await Post.aggregate([
     {
+      $sort: { createdAt: -1 }
+    },
+    {
       $addFields: {
         totalLikes: { $size: { $ifNull: ["$likes", []] } },
         totalComments: { $size: { $ifNull: ["$comments", []] } },
@@ -44,6 +47,24 @@ export const getAllPosts = async (req, res) => {
     },
   ]);
   res.status(StatusCodes.OK).json({ posts });
+};
+export const getPostById = async (req, res) => {
+  const { id: postId } = req.params;
+  const post = await Post.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(postId) }
+    },
+    {
+      $sort: { createdAt: -1 }
+    },
+    {
+      $addFields: {
+        totalLikes: { $size: { $ifNull: ["$likes", []] } },
+        totalComments: { $size: { $ifNull: ["$comments", []] } },
+      },
+    },
+  ]);
+  res.status(StatusCodes.OK).json({ post: post[0] });
 };
 
 export const likePosts = async (req, res) => {
@@ -92,6 +113,7 @@ export const getAllCommentsByPostId = async (req, res) => {
   const { id: postId } = req.params;
   const postComments = await PostComments.find({ postId })
     .select("-__v")
+    .sort({ createdAt: -1 }) // Sort by createdAt in descending order (newest first)
     .lean();
 
   const commentsWithReplies = postComments.map((comment) => ({
@@ -291,7 +313,7 @@ export const likePostComment = async (req, res) => {
   }
 
   const isLiked = comment.likes.includes(userId);
-  const update = isLiked 
+  const update = isLiked
     ? { $pull: { likes: userId } }
     : { $push: { likes: userId } };
 
@@ -310,15 +332,15 @@ export const likePostComment = async (req, res) => {
 }
 export const likePostCommentReply = async (req, res) => {
   const { id: replyId } = req.params;
-  const userId = req.user.userId;             
+  const userId = req.user.userId;
   const reply = await PostReplies.findById(replyId);
   if (!reply) {
     throw new BadRequestError("Reply not found");
-  }   
+  }
   const isLiked = reply.likes.includes(userId);
-  const update = isLiked 
+  const update = isLiked
     ? { $pull: { likes: userId } }
-    : { $push: { likes: userId } }; 
+    : { $push: { likes: userId } };
 
   const updatedReply = await PostReplies.findByIdAndUpdate(
     replyId,
@@ -330,6 +352,6 @@ export const likePostCommentReply = async (req, res) => {
   res.status(StatusCodes.OK).json({
     message,
     reply: updatedReply
-  }); 
-} 
+  });
+}
 

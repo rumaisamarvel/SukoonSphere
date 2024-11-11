@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { TAGS } from "../../../../utils/constants"
-import { Form } from "react-router-dom";
+import { Form, useActionData, useNavigation } from "react-router-dom";
 
 const PostModal = ({ onClose }) => {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const data = useActionData();
+  console.log({ data });
+
+
+
   return (
     <div className="fixed py-6 top-0 left-0 right-0 h-[100vh]  mx-auto flex items-center justify-center z-50 bg-black bg-opacity-50  ">
       <div className="bg-white sm:h-[90vh] rounded-xl w-full max-w-lg px-8 py-6 shadow-2xl transform transition-all">
@@ -10,6 +17,9 @@ const PostModal = ({ onClose }) => {
 
         <Form method="post" encType="multipart/form-data" className="">
           <div>
+            <div>
+              {data?.error && <p className="text-red-500">{data.error.split(",")[0]}</p>}
+            </div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               What's on your mind?
             </label>
@@ -77,8 +87,9 @@ const PostModal = ({ onClose }) => {
             <button
               type="submit"
               className="btn-2"
+              disabled={isSubmitting}
             >
-              Share Post
+              {isSubmitting ? "Sharing..." : "Share Post"}
             </button>
           </div>
         </Form>

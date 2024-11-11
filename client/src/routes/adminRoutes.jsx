@@ -3,7 +3,6 @@ import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 import CampaignArticles from '@/pages/dashboards/components/admin/articles/CampaignArticles';
 import Statistics from '@/pages/dashboards/components/admin/Statistics';
 import { AddArticles, ViewAllPosts } from '@/pages';
-import { postsLoader } from '@/pages/posts/Posts';
 
 export const adminRoutes = [
     {
@@ -38,6 +37,5 @@ export const adminRoutes = [
                 <ViewAllPosts />
             </Suspense>
         ),
-        loader: postsLoader
     },
 ];

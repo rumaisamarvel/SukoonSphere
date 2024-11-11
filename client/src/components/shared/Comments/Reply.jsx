@@ -11,7 +11,6 @@ import { IoMdClose } from 'react-icons/io';
 const Reply = ({
     reply,
     onEdit,
-    onLike,
     onDeleteReply,
     currentUser,
     type = 'post',
