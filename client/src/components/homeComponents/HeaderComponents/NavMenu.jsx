@@ -34,15 +34,15 @@ function NavMenu() {
   };
 
   return (
-    <nav className="w-full flex bg-white sticky top-0 items-center justify-between shadow-[0px_1px_10px_rgba(0,0,0,0.1)] z-50 transition-all ease-in-out p-2 h-[65px]">
+    <nav className="w-full flex bg-white sticky top-0 items-center justify-between shadow-[0px_1px_10px_rgba(0,0,0,0.1)] z-50 transition-all ease-in-out pt-4 pb-4 h-[65px]">
       <GiHamburgerMenu
         className="block absolute right-3 lg:hidden cursor-pointer text-[1.4rem]"
         onClick={toggleMenu}
       />
-      <div className="flex w-full justify-between items-center px-4 lg:px-20">
+      <div className="flex w-full justify-between items-center px-4 lg:px-10">
         <img
           src={CompanyLogo}
-          className="object-contain w-14"
+          className="object-contain w-20"
           alt="Logo Loading..."
         />
 

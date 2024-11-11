@@ -86,7 +86,7 @@ function TodaysQuiz() {
 
   return (
     <>
-      <SectionTitle title="Recent Quizzes" />
+      {/* <SectionTitle title="Recent Quizzes" /> */}
       <div className="max-w-7xl mx-auto  ">
         <div className="grid grid-cols-1  lg:grid-cols-12 gap-4  px-4 md:px-6 ">
           <div
