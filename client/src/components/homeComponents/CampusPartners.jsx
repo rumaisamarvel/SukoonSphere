@@ -27,7 +27,7 @@ function CampusPartners() {
     return (
         <>
             <div className='sm:mb-20 h-3/5 '>
-                {/* <SectionTitle title={"Our Partners"}></SectionTitle> */}
+                 <SectionTitle title={"Our Partners"}></SectionTitle> 
                 <div className="carousel-wrapper bg-[var(--primary)] p-2">
                     <p className="text-lg uppercase tracking-wide text-[var(--grey--500)] text-center pb-2">With
                         10+

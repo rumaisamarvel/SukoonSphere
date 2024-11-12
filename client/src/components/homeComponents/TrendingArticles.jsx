@@ -13,7 +13,7 @@ const SpotlightArticle = articles.reduce((max, article) => {
 
   return (
     <div className="max-w-7xl mx-auto my-12 mt-20">
-      {/* <SectionTitle title="Recent Artcles" /> */}
+      <SectionTitle title="Recent Artcles" /> 
       <div className="space-y-4">
         <div className="flex justify-center lg:justify-end mr-9">
           <h2 className=" text-3xl mt-1 text-[var(--black-color)] inline">

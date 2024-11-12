@@ -60,7 +60,7 @@ function Infography() {
 
   return (
     <div className="relative my-12 mb-20">
-      {/* <SectionTitle title={"Why SukoonSphere?"}></SectionTitle> */}
+      <SectionTitle title={"Why SukoonSphere?"}></SectionTitle> 
 
       <div className="max-w-7xl mx-auto text-white relative px-4 ">
         <div className="max-w-7xl mx-auto relative text-center">
