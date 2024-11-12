@@ -8,7 +8,7 @@ import { MdOutlineReadMore } from "react-icons/md";
 const OurStory = () => {
   return (
     <>
-      {/* <SectionTitle title={"Our Story"}></SectionTitle> */}
+      <SectionTitle title={"Our Story"}></SectionTitle> 
       <div
         className=" max-w-7xl mx-auto px-4  bg-[--primary] text-white rounded-[5px]"
         data-aos="fade-up"
